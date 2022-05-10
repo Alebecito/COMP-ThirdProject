@@ -1,0 +1,1 @@
+typedef typedef typedef char2
