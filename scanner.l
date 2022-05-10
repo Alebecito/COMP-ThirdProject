@@ -250,15 +250,13 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 . { }
 %%
 
-int check_type(void)
-{
-    if (atoi(yytext)== TYPEDEF_NAME) {
+int check_type(void) {
+    switch (atoi(yytext)) {
+    case TYPEDEF_NAME:                /* previously defined */
         return TYPEDEF_NAME;
-    }
-
-    if (atoi(yytext) == ENUMERATION_CONSTANT) {
+    case ENUMERATION_CONSTANT:        /* previously defined */
         return ENUMERATION_CONSTANT;
+    default:                          /* includes undefined */
+        return IDENTIFIER;
     }
-
-    return IDENTIFIER;
 }
