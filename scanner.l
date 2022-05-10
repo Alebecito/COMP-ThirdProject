@@ -243,11 +243,11 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 {string-literal} {COLUMN_NUMBER; return STRING_LITERAL;}
 {header-name} {COLUMN_NUMBER; return HEADER_NAME;}
 
-[ ] {COLUMN_NUMBER; }
-\n {COLUMN_NUMBER; /*printf("There's a newline \n");*/}
+[ ] {COLUMN_NUMBER; return WHITESPACE;}
+\n {return NEWLINE;}
 
-<<EOF>>     {/*printf("There's a EOF\n");  */return 0; }
-. { }
+<<EOF>> {return END_OF_FILE;}
+. {return ERROR;}
 %%
 
 int check_type(void) {

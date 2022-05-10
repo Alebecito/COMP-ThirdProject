@@ -1570,22 +1570,22 @@ YY_RULE_SETUP
 case 81:
 YY_RULE_SETUP
 #line 246 "scanner.l"
-{COLUMN_NUMBER; }
+{COLUMN_NUMBER; return WHITESPACE;}
 	YY_BREAK
 case 82:
 /* rule 82 can match eol */
 YY_RULE_SETUP
 #line 247 "scanner.l"
-{COLUMN_NUMBER; /*printf("There's a newline \n");*/}
+{return NEWLINE;}
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 #line 249 "scanner.l"
-{/*printf("There's a EOF\n");  */return 0; }
+{return END_OF_FILE;}
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
 #line 250 "scanner.l"
-{ }
+{return ERROR;}
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
