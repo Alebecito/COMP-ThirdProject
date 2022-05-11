@@ -5,10 +5,11 @@
 %{
     // #include "globals.h"
     #include "parserNuevecito.tab.h"
-    int yylval;
+    extern YYSTYPE yylval;
     static int next_column = 1;
     int column = 1;
     #define COLUMN_NUMBER column = next_column; next_column += strlen(yytext)
+    int check_type(void);
 %}
 
 
@@ -194,7 +195,7 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 {return} {COLUMN_NUMBER; return RETURN;}
 
 
-{identifier} {COLUMN_NUMBER; printf("IDENTIFIER\n"); return IDENTIFIER;}
+{identifier} {COLUMN_NUMBER; return check_type();}
 
 {integer-constant} {COLUMN_NUMBER; return INTEGER_CONSTANT;}
 {floating-constant} {COLUMN_NUMBER; return FLOATING_CONSTANT;}
@@ -243,20 +244,24 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 {string-literal} {COLUMN_NUMBER; return STRING_LITERAL;}
 {header-name} {COLUMN_NUMBER; return HEADER_NAME;}
 
-[ ] {COLUMN_NUMBER; }
+[ ] {COLUMN_NUMBER;}
 \n {COLUMN_NUMBER; /*printf("There's a newline \n");*/}
 
 <<EOF>>     {/*printf("There's a EOF\n");  */return 0; }
 . { }
+
 %%
 
 int check_type(void) {
-    switch (atoi(yytext)) {
-    case TYPEDEF_NAME:                /* previously defined */
+    switch (yylval) {
+    case TYPEDEF_NAME:
+        printf("TYPEDEF_NAME\n");               
         return TYPEDEF_NAME;
-    case ENUMERATION_CONSTANT:        /* previously defined */
+    case ENUMERATION_CONSTANT:
+        printf("ENUMERATION_CONSTANT\n");        
         return ENUMERATION_CONSTANT;
-    default:                          /* includes undefined */
+    default:
+        printf("IDENTIFIER\n");
         return IDENTIFIER;
     }
 }

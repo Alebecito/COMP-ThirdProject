@@ -1,1 +1,3 @@
-typedef typedef typedef char2
+void main() {
+    int a = 5 + 5;
+}
