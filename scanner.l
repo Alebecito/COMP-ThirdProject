@@ -1,15 +1,17 @@
-
+%option yylineno
 
 /* Definition Section has one variable which can be accessed inside yylex() and main() */
 
 %{
     // #include "globals.h"
     #include "parserNuevecito.tab.h"
-    extern YYSTYPE yylval;
+    #include <string.h>
     static int next_column = 1;
     int column = 1;
     #define COLUMN_NUMBER column = next_column; next_column += strlen(yytext)
     int check_type(void);
+    extern const char* token_name(int t);
+
 %}
 
 
@@ -245,7 +247,7 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 {header-name} {COLUMN_NUMBER; return HEADER_NAME;}
 
 [ ] {COLUMN_NUMBER;}
-\n {COLUMN_NUMBER; /*printf("There's a newline \n");*/}
+\n {COLUMN_NUMBER; next_column = 1; /*printf("There's a newline \n");*/}
 
 <<EOF>>     {/*printf("There's a EOF\n");  */return 0; }
 . { }
@@ -253,15 +255,5 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 %%
 
 int check_type(void) {
-    switch (yylval) {
-    case TYPEDEF_NAME:
-        printf("TYPEDEF_NAME\n");               
-        return TYPEDEF_NAME;
-    case ENUMERATION_CONSTANT:
-        printf("ENUMERATION_CONSTANT\n");        
-        return ENUMERATION_CONSTANT;
-    default:
-        printf("IDENTIFIER\n");
-        return IDENTIFIER;
-    }
+    return IDENTIFIER;
 }

@@ -11,8 +11,8 @@ extern char* yytext;
 #define YYERROR_VERBOSE 1
 %}
 
-%token	IDENTIFIER TYPEDEF_NAME INTEGER_CONSTANT FLOATING_CONSTANT ENUMERATION_CONSTANT CHARACTER_CONSTANT STRING_LITERAL 
-%token 	WHITESPACE
+%token	<value> IDENTIFIER INTEGER_CONSTANT FLOATING_CONSTANT CHARACTER_CONSTANT STRING_LITERAL 
+%token 	WHITESPACE TYPEDEF_NAME
 
 %token	PTR_OP INC_OP DEC_OP UNARY_OP LEFT_SHIFT RIGHT_SHIFT LE GE GREATER_OP HEADER_NAME
 %token  LOWER_OP EQ NOT_EQ LOGICAL_AND LOGICAL_OR ASSIGNMENT_OPERATOR ELLIPSIS
@@ -23,6 +23,10 @@ extern char* yytext;
 
 %nonassoc "then"
 %nonassoc ELSE
+
+%union {}
+
+%token-table
 
 %start translation_unit
 
@@ -38,7 +42,6 @@ primary_expression
 constant
 	: INTEGER_CONSTANT		
 	| FLOATING_CONSTANT
-	| ENUMERATION_CONSTANT
   	| CHARACTER_CONSTANT
 	; 
 	
@@ -255,8 +258,8 @@ enumerator_list
 	;
 
 enumerator
-	: ENUMERATION_CONSTANT
-	| ENUMERATION_CONSTANT '=' constant_expression
+	: IDENTIFIER
+	| IDENTIFIER '=' constant_expression
 	;
 
 type_qualifier
@@ -278,7 +281,7 @@ direct_declarator
 	: IDENTIFIER
 	| '(' declarator ')'
 	| direct_declarator '[' ']'
-  | direct_declarator '[' type_qualifier_list ']'
+ 	| direct_declarator '[' type_qualifier_list ']'
 	| direct_declarator '[' assignment_expression ']'
 	| direct_declarator '[' type_qualifier_list assignment_expression ']'
 	| direct_declarator '[' STATIC assignment_expression ']'
@@ -286,7 +289,7 @@ direct_declarator
 	| direct_declarator '[' type_qualifier_list STATIC assignment_expression ']'
 	| direct_declarator '[' '*' ']'
 	| direct_declarator '[' type_qualifier_list '*' ']'
-  | direct_declarator '(' parameter_type_list ')'
+  	| direct_declarator '(' parameter_type_list ')'
 	| direct_declarator '(' ')'
 	| direct_declarator '(' identifier_list ')'
 	;
@@ -338,16 +341,16 @@ abstract_declarator
 // revisar
 direct_abstract_declarator
 	: '(' abstract_declarator ')'
-  | '[' ']'
-  | '[' assignment_expression ']'
-  | direct_abstract_declarator '[' ']'
-  | direct_abstract_declarator '[' assignment_expression ']'
-  | '[' '*' ']'
-  | direct_abstract_declarator '[' '*' ']'
-  | '(' ')'
-  | '(' parameter_type_list ')'
-  | direct_abstract_declarator '(' ')'
-  | direct_abstract_declarator '(' parameter_type_list ')'
+  	| '[' ']'
+  	| '[' assignment_expression ']'
+  	| direct_abstract_declarator '[' ']'
+  	| direct_abstract_declarator '[' assignment_expression ']'
+  	| '[' '*' ']'
+  	| direct_abstract_declarator '[' '*' ']'
+  	| '(' ')'
+  	| '(' parameter_type_list ')'
+  	| direct_abstract_declarator '(' ')'
+  	| direct_abstract_declarator '(' parameter_type_list ')'
 	;
 
 initializer
@@ -480,4 +483,8 @@ int main(int argc, char **argv) {
 
 int yyerror(const char *str) {
     fprintf(stderr, "error: %s, line %d, column %d\n", str, yylineno, column);
+}
+
+const char* token_name(int t) {
+  return yytname[YYTRANSLATE(t)];
 }
