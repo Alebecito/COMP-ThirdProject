@@ -1,4 +1,4 @@
-typedef signed int t;
+ t;
 typedef int plain;
 struct tag {
 unsigned t:4;

@@ -6,6 +6,7 @@
     // #include "globals.h"
     #include "parserNuevecito.tab.h"
     #include <string.h>
+    #include "globals.h"
     static int next_column = 1;
     int column = 1;
     #define COLUMN_NUMBER column = next_column; next_column += strlen(yytext)
@@ -255,5 +256,9 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 %%
 
 int check_type(void) {
-    return IDENTIFIER;
+    if (typedef_name_flag) {
+        return TYPEDEF_NAME;
+    } else {
+        return IDENTIFIER;
+    }
 }

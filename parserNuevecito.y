@@ -1,7 +1,7 @@
 %{
-
 #include <stdio.h>
 #include <string.h>
+#include "globals.h"
 extern int yylex();
 extern int yyerror();
 extern int yylineno;
@@ -160,14 +160,14 @@ declaration
 	;
 
 declaration_specifiers
-	: storage_class_specifier 
-	| storage_class_specifier declaration_specifiers
-	| type_specifier 
-	| type_specifier declaration_specifiers
-	| type_qualifier 
-	| type_qualifier declaration_specifiers
-	| function_specifier 
-	| function_specifier declaration_specifiers
+	: storage_class_specifier  {typedef_name_flag = 0;}
+	| storage_class_specifier declaration_specifiers {typedef_name_flag = 0;}
+	| type_specifier  {typedef_name_flag = 1;}
+	| type_specifier declaration_specifiers  {typedef_name_flag = 1;}
+	| type_qualifier {typedef_name_flag = 0;}
+	| type_qualifier declaration_specifiers {typedef_name_flag = 0;}
+	| function_specifier  {typedef_name_flag = 0;}
+	| function_specifier declaration_specifiers {typedef_name_flag = 0;}
 	;
 
 init_declarator_list
@@ -203,7 +203,7 @@ type_specifier
 	| _IMAGINARY
 	| struct_or_union_specifier
 	| enum_specifier
-	| TYPEDEF_NAME	
+	| TYPEDEF_NAME {typedef_name_flag = 0;}	
 	;
 
 struct_or_union_specifier
@@ -227,8 +227,8 @@ struct_declaration
 	;
 
 specifier_qualifier_list
-	: type_specifier 
-	| type_specifier specifier_qualifier_list
+	: type_specifier   {typedef_name_flag = 1;}
+	| type_specifier specifier_qualifier_list   {typedef_name_flag = 1;}
 	| type_qualifier 
 	| type_qualifier specifier_qualifier_list
 	;
@@ -466,7 +466,7 @@ declaration_list
 %%
 
 int main(int argc, char **argv) {
-
+	typedef_name_flag = 0;
 	// #ifdef YYDEBUG
   	// 	yydebug = 1;
 	// #endif
@@ -480,6 +480,8 @@ int main(int argc, char **argv) {
 	/* printf("yytext: %s\n",yytext); */
 	return 0;
 }
+
+
 
 int yyerror(const char *str) {
     fprintf(stderr, "error: %s, line %d, column %d\n", str, yylineno, column);
