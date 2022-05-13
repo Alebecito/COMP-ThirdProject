@@ -1919,74 +1919,38 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 66:
-#line 163 "parserNuevecito.y"
-                                   {typedef_name_flag = 0;}
-#line 1926 "parserNuevecito.tab.c"
-    break;
-
-  case 67:
-#line 164 "parserNuevecito.y"
-                                                         {typedef_name_flag = 0;}
-#line 1932 "parserNuevecito.tab.c"
-    break;
-
   case 68:
 #line 165 "parserNuevecito.y"
-                          {typedef_name_flag = 1;}
-#line 1938 "parserNuevecito.tab.c"
+                          {printf("type_specifier1\n");}
+#line 1926 "parserNuevecito.tab.c"
     break;
 
   case 69:
 #line 166 "parserNuevecito.y"
-                                                 {typedef_name_flag = 1;}
-#line 1944 "parserNuevecito.tab.c"
+                                                 {printf("type_specifier2\n");}
+#line 1932 "parserNuevecito.tab.c"
     break;
 
-  case 70:
-#line 167 "parserNuevecito.y"
-                         {typedef_name_flag = 0;}
-#line 1950 "parserNuevecito.tab.c"
-    break;
-
-  case 71:
-#line 168 "parserNuevecito.y"
-                                                {typedef_name_flag = 0;}
-#line 1956 "parserNuevecito.tab.c"
-    break;
-
-  case 72:
-#line 169 "parserNuevecito.y"
-                              {typedef_name_flag = 0;}
-#line 1962 "parserNuevecito.tab.c"
-    break;
-
-  case 73:
-#line 170 "parserNuevecito.y"
-                                                    {typedef_name_flag = 0;}
-#line 1968 "parserNuevecito.tab.c"
-    break;
-
-  case 97:
-#line 206 "parserNuevecito.y"
-                       {typedef_name_flag = 0;}
-#line 1974 "parserNuevecito.tab.c"
+  case 78:
+#line 184 "parserNuevecito.y"
+                  {typedef_name_flag = 1;}
+#line 1938 "parserNuevecito.tab.c"
     break;
 
   case 106:
 #line 230 "parserNuevecito.y"
-                           {typedef_name_flag = 1;}
-#line 1980 "parserNuevecito.tab.c"
+                           {printf("type_specifier3\n");}
+#line 1944 "parserNuevecito.tab.c"
     break;
 
   case 107:
 #line 231 "parserNuevecito.y"
-                                                    {typedef_name_flag = 1;}
-#line 1986 "parserNuevecito.tab.c"
+                                                    {printf("type_specifier4\n");}
+#line 1950 "parserNuevecito.tab.c"
     break;
 
 
-#line 1990 "parserNuevecito.tab.c"
+#line 1954 "parserNuevecito.tab.c"
 
       default: break;
     }

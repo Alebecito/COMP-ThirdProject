@@ -255,10 +255,3 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 
 %%
 
-int check_type(void) {
-    if (typedef_name_flag) {
-        return TYPEDEF_NAME;
-    } else {
-        return IDENTIFIER;
-    }
-}

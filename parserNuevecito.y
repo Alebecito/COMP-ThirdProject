@@ -160,14 +160,14 @@ declaration
 	;
 
 declaration_specifiers
-	: storage_class_specifier  {typedef_name_flag = 0;}
-	| storage_class_specifier declaration_specifiers {typedef_name_flag = 0;}
-	| type_specifier  {typedef_name_flag = 1;}
-	| type_specifier declaration_specifiers  {typedef_name_flag = 1;}
-	| type_qualifier {typedef_name_flag = 0;}
-	| type_qualifier declaration_specifiers {typedef_name_flag = 0;}
-	| function_specifier  {typedef_name_flag = 0;}
-	| function_specifier declaration_specifiers {typedef_name_flag = 0;}
+	: storage_class_specifier 
+	| storage_class_specifier declaration_specifiers
+	| type_specifier  {printf("type_specifier1\n");}
+	| type_specifier declaration_specifiers  {printf("type_specifier2\n");}
+	| type_qualifier 
+	| type_qualifier declaration_specifiers
+	| function_specifier 
+	| function_specifier declaration_specifiers
 	;
 
 init_declarator_list
@@ -181,7 +181,7 @@ init_declarator
 	;
 
 storage_class_specifier
-	: TYPEDEF
+	: TYPEDEF {typedef_name_flag = 1;}
 	| EXTERN
 	| STATIC
 	| AUTO
@@ -203,7 +203,7 @@ type_specifier
 	| _IMAGINARY
 	| struct_or_union_specifier
 	| enum_specifier
-	| TYPEDEF_NAME {typedef_name_flag = 0;}	
+	| TYPEDEF_NAME
 	;
 
 struct_or_union_specifier
@@ -227,8 +227,8 @@ struct_declaration
 	;
 
 specifier_qualifier_list
-	: type_specifier   {typedef_name_flag = 1;}
-	| type_specifier specifier_qualifier_list   {typedef_name_flag = 1;}
+	: type_specifier   {printf("type_specifier3\n");}
+	| type_specifier specifier_qualifier_list   {printf("type_specifier4\n");}
 	| type_qualifier 
 	| type_qualifier specifier_qualifier_list
 	;
@@ -480,8 +480,6 @@ int main(int argc, char **argv) {
 	/* printf("yytext: %s\n",yytext); */
 	return 0;
 }
-
-
 
 int yyerror(const char *str) {
     fprintf(stderr, "error: %s, line %d, column %d\n", str, yylineno, column);
