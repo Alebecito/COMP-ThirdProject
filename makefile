@@ -1,5 +1,5 @@
 # part of the makefile
-parserC:  scanner.l parserNuevecito.y
-	bison -d -v parserNuevecito.y
+parserC:  scanner.l parserNuevecito.y main.c
+	bison -d -t -v parserNuevecito.y
 	flex scanner.l
-	gcc parserNuevecito.tab.c lex.yy.c -lfl -o parserC
+	gcc -g parserNuevecito.tab.c lex.yy.c main.c -lfl -o parserC

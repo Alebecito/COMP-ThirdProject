@@ -1,3 +1,16 @@
+%{
+#include <stdio.h>
+#include <string.h>
+#include "globals.h"
+extern int yylex();
+int yyerror();
+extern int yylineno;
+extern int column;
+extern FILE* yyin;
+extern char* lineptr;
+#define YYERROR_VERBOSE 1
+%}
+
 %token	IDENTIFIER I_CONSTANT F_CONSTANT STRING_LITERAL FUNC_NAME SIZEOF
 %token	PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token	AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
@@ -218,7 +231,7 @@ init_declarator
 	;
 
 storage_class_specifier
-	: TYPEDEF	/* identifiers must be flagged as TYPEDEF_NAME */
+	: TYPEDEF	{typedef_name_flag = 1;}
 	| EXTERN
 	| STATIC
 	| THREAD_LOCAL
@@ -268,8 +281,8 @@ struct_declaration
 	;
 
 specifier_qualifier_list
-	: type_specifier specifier_qualifier_list
-	| type_specifier
+	: type_specifier specifier_qualifier_list {typedef_name_flag = 2;}
+	| type_specifier {typedef_name_flag = 2;}
 	| type_qualifier specifier_qualifier_list
 	| type_qualifier
 	;
@@ -527,7 +540,10 @@ declaration_list
 %%
 #include <stdio.h>
 
-int yyerror(const char *s) {
-	fflush(stdout);
-	fprintf(stderr, "*** %s\n", s);
+int yyerror(const char *str) {
+    fprintf(stderr, "error: %s, line %d, column %d\n", str, yylineno, column);
+	//fprintf(stderr,"%s", lineptr);
+	for(int i = 0; i < column - 1; i++)
+		fprintf(stderr," ");
+    fprintf(stderr,"^\n");
 }

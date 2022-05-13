@@ -1,9 +1,4 @@
-%e  1019
-%p  2807
-%n  371
-%k  284
-%a  1213
-%o  1117
+%option yylineno
 
 O   [0-7]
 D   [0-9]
@@ -19,20 +14,18 @@ IS  (((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))
 CP  (u|U|L)
 SP  (u8|u|U|L)
 ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
-WS  [ \t\v\n\f]
+WS  [\t\v\n\f]
 
 %{
-#include <stdio.h>
-#include "parserNuevecito.tab.h"
-
-extern void yyerror(const char *);  /* prints grammar violation message */
-
-extern int sym_type(const char *);  /* returns type from symbol table */
-
-#define sym_type(identifier) IDENTIFIER /* with no symbol table, fake it */
-
-static void comment(void);
-static int check_type(void);
+    // #include "globals.h"
+    #include "parserNuevecito.tab.h"
+    #include <string.h>
+    #include "globals.h"
+    static int next_column = 1;
+    int column = 1;
+    char* line;
+    #define COLUMN_NUMBER column = next_column; next_column += strlen(yytext)
+    int check_type(void);
 %}
 
 %%
@@ -155,15 +148,78 @@ int yywrap(void)        /* called at end of input */
     return 1;           /* terminate now */
 }
 
-static int check_type(void)
-{
-    switch (sym_type(yytext))
-    {
-    case TYPEDEF_NAME:                /* previously defined */
+int get_symbol_idx (char* value) {
+    for (int i = 0 ; i < symbolTable.nullsym; i++){
+        if (strcmp(symbolTable.symbols[i].lexeme, value) == 0)
+            return i;
+    }
+    return -1;
+}
+
+int get_symbol_type(char* value) {
+    for(int i = 0 ; i < symbolTable.nullsym; i++) {
+        if (strcmp(symbolTable.symbols[i].lexeme, value) == 0)
+            return symbolTable.symbols[i].type;
+    }
+    return -1;
+}
+
+void add_symbol_to_symbolTable(Symbol symbol) {
+    if (symbolTable.nullsym >= symbolTable.size ) {
+        symbolTable.size *= 2;
+        Symbol* new_symbolTable = realloc(symbolTable.symbols, symbolTable.size * sizeof(Symbol));
+        if (new_symbolTable == NULL) {
+            printf("Unable to allocate enough memory for symbol table");
+            exit(-1);
+        } else {
+            symbolTable.symbols = new_symbolTable;
+        }
+    }   
+    int symbol_idx = get_symbol_idx(symbol.lexeme);
+    if (symbol_idx == -1) {
+        symbolTable.symbols[symbolTable.nullsym++] = symbol;
+    } else {
+        symbolTable.symbols[symbol_idx] = symbol;
+    }
+}
+
+void show_symbol_table() {
+    printf("\n********** Symbol Table **********\n");
+    printf("Length: %d \n", symbolTable.nullsym);
+    for (int i = 0; i < symbolTable.nullsym; i++) {
+        printf("\t%s -> %d\n", symbolTable.symbols[i].lexeme, symbolTable.symbols[i].type);
+
+        // if (strchr(symbolTable.pp_ids[i].lexeme, '"') != 0) {
+        //     printf("%s -> %s\n", symbolTable.pp_ids[i].name, symbolTable.pp_ids[i].lexeme);
+        // }
+    }
+    printf("Length: %d. Max size: %d \n", symbolTable.nullsym, symbolTable.size);
+    printf("********************\n\n");
+}
+
+
+int check_type(void) {
+    printf("CHECK_TYPE: %d\n", typedef_name_flag);
+    Symbol new_symbol;
+    if (typedef_name_flag == 1) {
+        new_symbol.type = TYPEDEF_NAME;
+        new_symbol.lexeme = malloc(sizeof(char) * (strlen(yytext) + 1));
+        strcpy(new_symbol.lexeme, yytext);
+        add_symbol_to_symbolTable(new_symbol);
+        typedef_name_flag = 0;
+        // show_symbol_table();
         return TYPEDEF_NAME;
-    case ENUMERATION_CONSTANT:        /* previously defined */
-        return ENUMERATION_CONSTANT;
-    default:                          /* includes undefined */
+    } 
+    else if (typedef_name_flag == 2) {
+        typedef_name_flag = 0;
+        if (get_symbol_type(yytext) != -1) {
+            return TYPEDEF_NAME; 
+        } else {
+            return IDENTIFIER;
+        }
+    }
+    else {
         return IDENTIFIER;
     }
+    return IDENTIFIER;
 }
