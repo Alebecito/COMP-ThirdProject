@@ -1,278 +1,169 @@
-%option yylineno
+%e  1019
+%p  2807
+%n  371
+%k  284
+%a  1213
+%o  1117
 
-/* Definition Section has one variable which can be accessed inside yylex() and main() */
+O   [0-7]
+D   [0-9]
+NZ  [1-9]
+L   [a-zA-Z_]
+A   [a-zA-Z_0-9]
+H   [a-fA-F0-9]
+HP  (0[xX])
+E   ([Ee][+-]?{D}+)
+P   ([Pp][+-]?{D}+)
+FS  (f|F|l|L)
+IS  (((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))
+CP  (u|U|L)
+SP  (u8|u|U|L)
+ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
+WS  [ \t\v\n\f]
 
 %{
-    // #include "globals.h"
-    #include "parserNuevecito.tab.h"
-    #include <string.h>
-    #include "globals.h"
-    static int next_column = 1;
-    int column = 1;
-    char* line;
-    #define COLUMN_NUMBER column = next_column; next_column += strlen(yytext)
-    int check_type(void);
-    char *lineptr = NULL;
-    size_t n = 0;
-    size_t consumed = 0;
-    size_t available = 0;
+#include <stdio.h>
+#include "parserNuevecito.tab.h"
 
-    size_t min(size_t a, size_t b);
-    #define YY_INPUT(buf,result,max_size) {\
-        if(available <= 0) {\
-            consumed = 0;\
-            available = getline(&lineptr, &n, yyin);\
-            if (available < 0) {\
-                if (ferror(yyin)) { perror("read error:"); }\
-                    available = 0;\
-                }\
-        }\
-        result = min(available, max_size);\
-        strncpy(buf, lineptr + consumed, result);\
-        consumed += result;\
-        available -= result;\
-    }
+extern void yyerror(const char *);  /* prints grammar violation message */
+
+extern int sym_type(const char *);  /* returns type from symbol table */
+
+#define sym_type(identifier) IDENTIFIER /* with no symbol table, fake it */
+
+static void comment(void);
+static int check_type(void);
 %}
 
-
-
-/* Keywords */
-
-sizeof (sizeof)
-typedef (typedef)
-extern (extern)
-static (static)
-auto (auto)
-register (register)
-void (void)
-char (char)
-short (short)
-int (int)
-long (long)
-float (float)
-double (double)
-signed (signed)
-unsigned (unsigned)
-_bool (_Bool)
-_complex (_Complex)
-_imaginary (_Imaginary)
-struct (struct)
-union (union)
-enum (enum)
-const (const)
-restrict (restrict)
-volatile (volatile)
-inline (inline)
-case (case)
-default (default)
-if (if)
-else (else)
-switch (switch)
-for (for)
-do (do)
-while (while)
-goto (goto)
-continue (continue)
-break (break)
-return (return)
-
-
-/*decimal-constant*/
-
-
-integer-suffix ([uU](ll|LL|[lL]?))|((ll|LL|l|L)[uU]?)
-
-decimal-constant        [1-9][0-9]*
-octal-constant          0[0-7]*
-hexadecimal-constant    0[xX][0-9a-fA-f]+
-
-integer-constant ({decimal-constant}|{octal-constant}|{hexadecimal-constant}){integer-suffix}?
-
-
-/*Universal character names*/
-universal-character-name \\(u{hex-quad}|U{hex-quad}{hex-quad})
-
-/* Identifiers */
-
-nondigit    [A-Za-z]|_
-digit       [0-9]
-hex-digit   [0-9]|[a-f]|[A-F]
-hex-quad    {hex-digit}{4}
-identifier-nondigit     {nondigit}|{universal-character-name}
-identifier  {identifier-nondigit}({identifier-nondigit}|{digit})*
-/*integer-constant-octal 0|([0-7]+()*/
-
-floating-constant {decimal-floating-constant}|{hexadecimal-floating-constant}
-decimal-floating-constant ({fractional-constant}{exponent-part}?{floating-suffix}?)|({digit-sequence}{exponent-part}{floating-suffix}?)
-hexadecimal-floating-constant ({hexadecimal-prefix}{hexadecimal-fractional-constant}{binary-exponent-part}{floating-suffix}?)|({hexadecimal-prefix}{hexadecimal-digit-sequence}{binary-exponent-part}{floating-suffix}?)
-fractional-constant ({digit-sequence}?[.]{digit-sequence})|({digit-sequence}[.])
-exponent-part [eE]{sign}?{digit-sequence}
-sign [+-]
-digit-sequence {digit}+
-hexadecimal-fractional-constant ({hexadecimal-digit-sequence}?[.]{hexadecimal-digit-sequence})|({hexadecimal-digit-sequence}[.])
-binary-exponent-part [pP]{sign}?{digit-sequence}
-hexadecimal-digit-sequence {hex-digit}+
-floating-suffix [fFlL]
-
-/*Integer constants*/
-hexadecimal-prefix 0x|0X
-nonzero-digit [1-9]
-octal-digit [0-7]
-hexadecimal-digit [0-9a-fA-F]
-
-
-/*Character constants*/
-hexadecimal-escape-sequence \\x{hexadecimal-digit}{1,2}
-octal-escape-sequence \\{octal-digit}{1,3}
-simple-escape-sequence \\\'|\\\"|\\\\|\\[?abfnrtv]
-escape-sequence {simple-escape-sequence}|{octal-escape-sequence}|{hexadecimal-escape-sequence}|{universal-character-name}
-c-char [^\'\\\n]|{escape-sequence}
-c-char-sequence {c-char}{1,2}
-character-constant L?\'{c-char-sequence}\'
-
-/* *String literals */
-string-literal  L?\"([^\"\\\n]|{escape-sequence})*\"
-
-
-/*Enumeration constants*/
-enumeration-constant {identifier}
-
-/*Punctuators*/
-
-
-/*Operators*/
-
-assignment-operators (=|\+=|-=|\*=|\/=|%=|&=|\|=|\^=|>>=|<<=)
-
-unary_operator (%|\*|\+|-|~|!)
-
-ptr_op (->)
-inc_op (\+\+)
-dec_op (--)
-left_shift (<<)
-right_shift (>>)
-lower_op (<)
-greater_op (>)
-lower_equal (<=)
-greater_equal (>=)
-equal (==)
-not_equal (!=)
-logical_and (&&)
-logical_or (\|\|)
-ellipsis (\.\.\.)
-
-
-/* Header names */
-
-h-char-sequence <([^>\n])+>
-q-char-sequence \"[^\"\n]+\"
-header-name {h-char-sequence}|{q-char-sequence}
-
-constant {integer-constant}|{floating-constant}|{enumeration-constant}|{character-constant}
-
-/*([A-Za-z]|_)(([A-Za-z]|_)|[0-9])*/
-
-/* Rule Section has three rules, first rule */
-/* matches with capital letters, second rule*/
-/* matches with any character except newline and */
-/* third rule does not take input after the enter*/
 %%
+"auto"					{ return(AUTO); }
+"break"					{ return(BREAK); }
+"case"					{ return(CASE); }
+"char"					{ return(CHAR); }
+"const"					{ return(CONST); }
+"continue"				{ return(CONTINUE); }
+"default"				{ return(DEFAULT); }
+"do"					{ return(DO); }
+"double"				{ return(DOUBLE); }
+"else"					{ return(ELSE); }
+"enum"					{ return(ENUM); }
+"extern"				{ return(EXTERN); }
+"float"					{ return(FLOAT); }
+"for"					{ return(FOR); }
+"goto"					{ return(GOTO); }
+"if"					{ return(IF); }
+"inline"				{ return(INLINE); }
+"int"					{ return(INT); }
+"long"					{ return(LONG); }
+"register"				{ return(REGISTER); }
+"restrict"				{ return(RESTRICT); }
+"return"				{ return(RETURN); }
+"short"					{ return(SHORT); }
+"signed"				{ return(SIGNED); }
+"sizeof"				{ return(SIZEOF); }
+"static"				{ return(STATIC); }
+"struct"				{ return(STRUCT); }
+"switch"				{ return(SWITCH); }
+"typedef"				{ return(TYPEDEF); }
+"union"					{ return(UNION); }
+"unsigned"				{ return(UNSIGNED); }
+"void"					{ return(VOID); }
+"volatile"				{ return(VOLATILE); }
+"while"					{ return(WHILE); }
+"_Alignas"                              { return ALIGNAS; }
+"_Alignof"                              { return ALIGNOF; }
+"_Atomic"                               { return ATOMIC; }
+"_Bool"                                 { return BOOL; }
+"_Complex"                              { return COMPLEX; }
+"_Generic"                              { return GENERIC; }
+"_Imaginary"                            { return IMAGINARY; }
+"_Noreturn"                             { return NORETURN; }
+"_Static_assert"                        { return STATIC_ASSERT; }
+"_Thread_local"                         { return THREAD_LOCAL; }
+"__func__"                              { return FUNC_NAME; }
 
-{sizeof} {COLUMN_NUMBER; return SIZEOF;}
-{typedef} {COLUMN_NUMBER; return TYPEDEF;}
-{extern} {COLUMN_NUMBER; return EXTERN;}
-{static} {COLUMN_NUMBER; return STATIC;}
-{auto} {COLUMN_NUMBER; return AUTO;}
-{register} {COLUMN_NUMBER; return REGISTER;}
-{void} {COLUMN_NUMBER; return VOID;}
-{char} {COLUMN_NUMBER; return CHAR;}
-{short} {COLUMN_NUMBER; return SHORT;}
-{int} {COLUMN_NUMBER; return INT;}
-{long} {COLUMN_NUMBER; return LONG;}
-{float} {COLUMN_NUMBER; return FLOAT;}
-{double} {COLUMN_NUMBER; return DOUBLE;}
-{signed} {COLUMN_NUMBER; return SIGNED;}
-{unsigned} {COLUMN_NUMBER; return UNSIGNED;}
-{_bool} {COLUMN_NUMBER; return _BOOL;}
-{_complex} {COLUMN_NUMBER; return _COMPLEX;}
-{_imaginary} {COLUMN_NUMBER; return _IMAGINARY;}
-{struct} {COLUMN_NUMBER; return STRUCT;}
-{union} {COLUMN_NUMBER; return UNION;}
-{enum} {COLUMN_NUMBER; return ENUM;}
-{const} {COLUMN_NUMBER; return CONST;}
-{restrict} {COLUMN_NUMBER; return RESTRICT;}
-{volatile} {COLUMN_NUMBER; return VOLATILE;}
-{inline} {COLUMN_NUMBER; return INLINE;}
-{case} {COLUMN_NUMBER; return CASE;}
-{default} {COLUMN_NUMBER; return DEFAULT;}
-{if} {COLUMN_NUMBER; return IF;}
-{else} {COLUMN_NUMBER; return ELSE;}
-{switch} {COLUMN_NUMBER; return SWITCH;}
-{for} {COLUMN_NUMBER; return FOR;}
-{do} {COLUMN_NUMBER; return DO;}
-{while} {COLUMN_NUMBER; return WHILE;}
-{goto} {COLUMN_NUMBER; return GOTO;}
-{continue} {COLUMN_NUMBER; return CONTINUE;}
-{break} {COLUMN_NUMBER; return BREAK;}
-{return} {COLUMN_NUMBER; return RETURN;}
+{L}{A}*					{ return check_type(); }
 
+{HP}{H}+{IS}?				{ return I_CONSTANT; }
+{NZ}{D}*{IS}?				{ return I_CONSTANT; }
+"0"{O}*{IS}?				{ return I_CONSTANT; }
+{CP}?"'"([^'\\\n]|{ES})+"'"		{ return I_CONSTANT; }
 
-{identifier} {COLUMN_NUMBER; return IDENTIFIER;}
+{D}+{E}{FS}?				{ return F_CONSTANT; }
+{D}*"."{D}+{E}?{FS}?			{ return F_CONSTANT; }
+{D}+"."{E}?{FS}?			{ return F_CONSTANT; }
+{HP}{H}+{P}{FS}?			{ return F_CONSTANT; }
+{HP}{H}*"."{H}+{P}{FS}?			{ return F_CONSTANT; }
+{HP}{H}+"."{P}{FS}?			{ return F_CONSTANT; }
 
-{integer-constant} {COLUMN_NUMBER; return INTEGER_CONSTANT;}
-{floating-constant} {COLUMN_NUMBER; return FLOATING_CONSTANT;}
-{character-constant} {COLUMN_NUMBER; return CHARACTER_CONSTANT;}
+({SP}?\"([^"\\\n]|{ES})*\"{WS}*)+	{ return STRING_LITERAL; }
 
-";" {COLUMN_NUMBER; return(';'); }
-("{"|"<%") {COLUMN_NUMBER; return('{'); }
-("}"|"%>") {COLUMN_NUMBER; return('}'); }
-"," {COLUMN_NUMBER; return(','); }
-":"	{COLUMN_NUMBER; return(':'); }
-"="	{COLUMN_NUMBER; return('=');}
-"("	{COLUMN_NUMBER; return('('); }
-")"	{ COLUMN_NUMBER; return(')'); }
-("["|"<:") {COLUMN_NUMBER; return('['); }
-("]"|":>") {COLUMN_NUMBER; return(']'); }
-"."	{COLUMN_NUMBER; return('.'); }
-"&"	{COLUMN_NUMBER; return('&'); }
-"!"	{COLUMN_NUMBER; return('!'); }
-"~"	{COLUMN_NUMBER; return('~'); }
-"-"	{COLUMN_NUMBER; return('-'); }
-"+"	{COLUMN_NUMBER; return('+'); }
-"*"	{COLUMN_NUMBER; return('*'); }
-"/"	{COLUMN_NUMBER; return('/'); }
-"%"	{COLUMN_NUMBER; return('%'); }
-"^"	{COLUMN_NUMBER; return('^'); }
-"|"	{COLUMN_NUMBER; return('|'); }
-"?"	{COLUMN_NUMBER; return('?'); }
+"..."					{ return ELLIPSIS; }
+">>="					{ return RIGHT_ASSIGN; }
+"<<="					{ return LEFT_ASSIGN; }
+"+="					{ return ADD_ASSIGN; }
+"-="					{ return SUB_ASSIGN; }
+"*="					{ return MUL_ASSIGN; }
+"/="					{ return DIV_ASSIGN; }
+"%="					{ return MOD_ASSIGN; }
+"&="					{ return AND_ASSIGN; }
+"^="					{ return XOR_ASSIGN; }
+"|="					{ return OR_ASSIGN; }
+">>"					{ return RIGHT_OP; }
+"<<"					{ return LEFT_OP; }
+"++"					{ return INC_OP; }
+"--"					{ return DEC_OP; }
+"->"					{ return PTR_OP; }
+"&&"					{ return AND_OP; }
+"||"					{ return OR_OP; }
+"<="					{ return LE_OP; }
+">="					{ return GE_OP; }
+"=="					{ return EQ_OP; }
+"!="					{ return NE_OP; }
+";"					{ return ';'; }
+("{"|"<%")				{ return '{'; }
+("}"|"%>")				{ return '}'; }
+","					{ return ','; }
+":"					{ return ':'; }
+"="					{ return '='; }
+"("					{ return '('; }
+")"					{ return ')'; }
+("["|"<:")				{ return '['; }
+("]"|":>")				{ return ']'; }
+"."					{ return '.'; }
+"&"					{ return '&'; }
+"!"					{ return '!'; }
+"~"					{ return '~'; }
+"-"					{ return '-'; }
+"+"					{ return '+'; }
+"*"					{ return '*'; }
+"/"					{ return '/'; }
+"%"					{ return '%'; }
+"<"					{ return '<'; }
+">"					{ return '>'; }
+"^"					{ return '^'; }
+"|"					{ return '|'; }
+"?"					{ return '?'; }
 
-{ptr_op} {COLUMN_NUMBER; return PTR_OP;}
-{inc_op} {COLUMN_NUMBER; return INC_OP;}
-{dec_op} {COLUMN_NUMBER; return DEC_OP;}
-{left_shift} {COLUMN_NUMBER; return LEFT_SHIFT;}
-{right_shift} {COLUMN_NUMBER; return RIGHT_SHIFT;}
-{lower_op} {COLUMN_NUMBER; return LOWER_OP;}
-{greater_op} {COLUMN_NUMBER; return GREATER_OP;}
-{lower_equal} {COLUMN_NUMBER; return LE;}
-{greater_equal} {COLUMN_NUMBER; return GE;}
-{equal} {COLUMN_NUMBER; return EQ;}
-{not_equal} {COLUMN_NUMBER; return NOT_EQ;}
-{logical_and} {COLUMN_NUMBER; return LOGICAL_AND;}
-{logical_or} {COLUMN_NUMBER; return LOGICAL_OR;}
-{ellipsis} {COLUMN_NUMBER; return ELLIPSIS;}
-
-{assignment-operators} {COLUMN_NUMBER; return ASSIGNMENT_OPERATOR;}
-
-{string-literal} {COLUMN_NUMBER; return STRING_LITERAL;}
-{header-name} {COLUMN_NUMBER; return HEADER_NAME;}
-
-[ ] {COLUMN_NUMBER;}
-\n {next_column = 1;}
-
-. {}
+{WS}+					{ /* whitespace separates tokens */ }
+.					{ /* discard bad characters */ }
 
 %%
 
-size_t min(size_t a, size_t b) {
-    return b < a ? b : a;
+int yywrap(void)        /* called at end of input */
+{
+    return 1;           /* terminate now */
+}
+
+static int check_type(void)
+{
+    switch (sym_type(yytext))
+    {
+    case TYPEDEF_NAME:                /* previously defined */
+        return TYPEDEF_NAME;
+    case ENUMERATION_CONSTANT:        /* previously defined */
+        return ENUMERATION_CONSTANT;
+    default:                          /* includes undefined */
+        return IDENTIFIER;
+    }
 }

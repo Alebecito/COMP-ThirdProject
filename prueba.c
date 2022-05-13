@@ -1,9 +1,6 @@
-void main() {
-    int a = . + 5
-}
-
-void main() {
-    nt a = 5 + 5;
+void copyt(int n)
+{
+int b[n];
 }
 
 
