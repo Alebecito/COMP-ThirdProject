@@ -28,7 +28,12 @@ extern char* lineptr;
 
 %token	ALIGNAS ALIGNOF ATOMIC GENERIC NORETURN STATIC_ASSERT THREAD_LOCAL
 
+%nonassoc "then"
+%nonassoc ELSE
+
 %start translation_unit
+%define parse.error verbose
+
 %%
 
 primary_expression
@@ -252,7 +257,6 @@ type_specifier
 	| BOOL
 	| COMPLEX
 	| IMAGINARY	  	/* non-mandated extension */
-	| atomic_type_specifier
 	| struct_or_union_specifier
 	| enum_specifier
 	| TYPEDEF_NAME		/* after it has been defined as such */
@@ -315,11 +319,7 @@ enumerator	/* identifiers must be flagged as ENUMERATION_CONSTANT */
 	: enumeration_constant '=' constant_expression
 	| enumeration_constant
 	;
-
-atomic_type_specifier
-	: ATOMIC '(' type_name ')'
-	;
-
+	
 type_qualifier
 	: CONST
 	| RESTRICT
@@ -496,7 +496,7 @@ expression_statement
 
 selection_statement
 	: IF '(' expression ')' statement ELSE statement
-	| IF '(' expression ')' statement
+	| IF '(' expression ')' statement %prec "then"
 	| SWITCH '(' expression ')' statement
 	;
 
