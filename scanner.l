@@ -9,10 +9,29 @@
     #include "globals.h"
     static int next_column = 1;
     int column = 1;
+    char* line;
     #define COLUMN_NUMBER column = next_column; next_column += strlen(yytext)
     int check_type(void);
-    extern const char* token_name(int t);
+    char *lineptr = NULL;
+    size_t n = 0;
+    size_t consumed = 0;
+    size_t available = 0;
 
+    size_t min(size_t a, size_t b);
+    #define YY_INPUT(buf,result,max_size) {\
+        if(available <= 0) {\
+            consumed = 0;\
+            available = getline(&lineptr, &n, yyin);\
+            if (available < 0) {\
+                if (ferror(yyin)) { perror("read error:"); }\
+                    available = 0;\
+                }\
+        }\
+        result = min(available, max_size);\
+        strncpy(buf, lineptr + consumed, result);\
+        consumed += result;\
+        available -= result;\
+    }
 %}
 
 
@@ -198,7 +217,7 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 {return} {COLUMN_NUMBER; return RETURN;}
 
 
-{identifier} {COLUMN_NUMBER; return check_type();}
+{identifier} {COLUMN_NUMBER; return IDENTIFIER;}
 
 {integer-constant} {COLUMN_NUMBER; return INTEGER_CONSTANT;}
 {floating-constant} {COLUMN_NUMBER; return FLOATING_CONSTANT;}
@@ -209,7 +228,7 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 ("}"|"%>") {COLUMN_NUMBER; return('}'); }
 "," {COLUMN_NUMBER; return(','); }
 ":"	{COLUMN_NUMBER; return(':'); }
-"="	{COLUMN_NUMBER; return('='); }
+"="	{COLUMN_NUMBER; return('=');}
 "("	{COLUMN_NUMBER; return('('); }
 ")"	{ COLUMN_NUMBER; return(')'); }
 ("["|"<:") {COLUMN_NUMBER; return('['); }
@@ -248,17 +267,12 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 {header-name} {COLUMN_NUMBER; return HEADER_NAME;}
 
 [ ] {COLUMN_NUMBER;}
-\n {COLUMN_NUMBER; next_column = 1; /*printf("There's a newline \n");*/}
+\n {next_column = 1;}
 
-<<EOF>>     {/*printf("There's a EOF\n");  */return 0; }
-. { }
+. {}
 
 %%
 
-int check_type(void) {
-    if (typedef_name_flag) {
-        return TYPEDEF_NAME;
-    } else {
-        return IDENTIFIER;
-    }
+size_t min(size_t a, size_t b) {
+    return b < a ? b : a;
 }
