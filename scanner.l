@@ -1,20 +1,20 @@
 %option yylineno
 
-O   [0-7]
-D   [0-9]
-NZ  [1-9]
-L   [a-zA-Z_]
-A   [a-zA-Z_0-9]
-H   [a-fA-F0-9]
-HP  (0[xX])
-E   ([Ee][+-]?{D}+)
-P   ([Pp][+-]?{D}+)
-FS  (f|F|l|L)
-IS  (((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))
+octal-digit   [0-7]
+digit   [0-9]
+nonzero-digit   [1-9]
+nondigit   [a-zA-Z_]
+alphabetical-digit   [a-zA-Z_0-9]
+hexadecimal-digit   [a-fA-F0-9]
+hexadecimal-prefix  (0[xX])
+exponent-part   ([Ee][+-]?{digit}+)
+binary-exponent-part   ([Pp][+-]?{digit}+)
+floating-suffix   (f|F|l|L)
+integer-suffix   (((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))
 CP  (u|U|L)
 SP  (u8|u|U|L)
-ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
-WS  [\t\v\n\f]
+escape-sequence   (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
+whitespace  [\t\v\n\f]
 
 %{
     // #include "globals.h"
@@ -63,33 +63,33 @@ WS  [\t\v\n\f]
 "void"					{ return(VOID); }
 "volatile"				{ return(VOLATILE); }
 "while"					{ return(WHILE); }
-"_Alignas"                              { return ALIGNAS; }
-"_Alignof"                              { return ALIGNOF; }
-"_Atomic"                               { return ATOMIC; }
-"_Bool"                                 { return BOOL; }
-"_Complex"                              { return COMPLEX; }
-"_Generic"                              { return GENERIC; }
-"_Imaginary"                            { return IMAGINARY; }
-"_Noreturn"                             { return NORETURN; }
-"_Static_assert"                        { return STATIC_ASSERT; }
-"_Thread_local"                         { return THREAD_LOCAL; }
+"_Alignas"                              { return _ALIGNAS; }
+"_Alignof"                              { return _ALIGNOF; }
+"_Atomic"                               { return _ATOMIC; }
+"_Bool"                                 { return _BOOL; }
+"_Complex"                              { return _COMPLEX; }
+"_Generic"                              { return _GENERIC; }
+"_Imaginary"                            { return _IMAGINARY; }
+"_Noreturn"                             { return _NORETURN; }
+"_Static_assert"                        { return _STATIC_ASSERT; }
+"_Thread_local"                         { return _THREAD_LOCAL; }
 "__func__"                              { return FUNC_NAME; }
 
-{L}{A}*					{ return check_type(); }
+{nondigit}{alphabetical-digit}*					{ return check_type(); }
 
-{HP}{H}+{IS}?				{ return I_CONSTANT; }
-{NZ}{D}*{IS}?				{ return I_CONSTANT; }
-"0"{O}*{IS}?				{ return I_CONSTANT; }
-{CP}?"'"([^'\\\n]|{ES})+"'"		{ return I_CONSTANT; }
+{hexadecimal-prefix}{hexadecimal-digit}+{integer-suffix}?				{ return INTEGER_CONSTANT; }
+{nonzero-digit}{digit}*{integer-suffix}?				{ return INTEGER_CONSTANT; }
+"0"{octal-digit}*{integer-suffix}?				{ return INTEGER_CONSTANT; }
+{CP}?"'"([^'\\\n]|{escape-sequence})+"'"		{ return INTEGER_CONSTANT; }
 
-{D}+{E}{FS}?				{ return F_CONSTANT; }
-{D}*"."{D}+{E}?{FS}?			{ return F_CONSTANT; }
-{D}+"."{E}?{FS}?			{ return F_CONSTANT; }
-{HP}{H}+{P}{FS}?			{ return F_CONSTANT; }
-{HP}{H}*"."{H}+{P}{FS}?			{ return F_CONSTANT; }
-{HP}{H}+"."{P}{FS}?			{ return F_CONSTANT; }
+{digit}+{exponent-part}{floating-suffix}?				{ return FLOATING_CONSTANT; }
+{digit}*"."{digit}+{exponent-part}?{floating-suffix}?			{ return FLOATING_CONSTANT; }
+{digit}+"."{exponent-part}?{floating-suffix}?			{ return FLOATING_CONSTANT; }
+{hexadecimal-prefix}{hexadecimal-digit}+{binary-exponent-part}{floating-suffix}?			{ return FLOATING_CONSTANT; }
+{hexadecimal-prefix}{hexadecimal-digit}*"."{hexadecimal-digit}+{binary-exponent-part}{floating-suffix}?			{ return FLOATING_CONSTANT; }
+{hexadecimal-prefix}{hexadecimal-digit}+"."{binary-exponent-part}{floating-suffix}?			{ return FLOATING_CONSTANT; }
 
-({SP}?\"([^"\\\n]|{ES})*\"{WS}*)+	{ return STRING_LITERAL; }
+({SP}?\"([^"\\\n]|{escape-sequence})*\"{whitespace}*)+	{ return STRING_LITERAL; }
 
 "..."					{ return ELLIPSIS; }
 ">>="					{ return RIGHT_ASSIGN; }
@@ -138,7 +138,7 @@ WS  [\t\v\n\f]
 "|"					{ return '|'; }
 "?"					{ return '?'; }
 
-{WS}+					{ /* whitespace separates tokens */ }
+{whitespace}+					{ /* whitespace separates tokens */ }
 .					{ /* discard bad characters */ }
 
 %%

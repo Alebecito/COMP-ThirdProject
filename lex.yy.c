@@ -1232,52 +1232,52 @@ YY_RULE_SETUP
 case 35:
 YY_RULE_SETUP
 #line 66 "scanner.l"
-{ return ALIGNAS; }
+{ return _ALIGNAS; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 67 "scanner.l"
-{ return ALIGNOF; }
+{ return _ALIGNOF; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 68 "scanner.l"
-{ return ATOMIC; }
+{ return _ATOMIC; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 69 "scanner.l"
-{ return BOOL; }
+{ return _BOOL; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 70 "scanner.l"
-{ return COMPLEX; }
+{ return _COMPLEX; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 71 "scanner.l"
-{ return GENERIC; }
+{ return _GENERIC; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 72 "scanner.l"
-{ return IMAGINARY; }
+{ return _IMAGINARY; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 73 "scanner.l"
-{ return NORETURN; }
+{ return _NORETURN; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 74 "scanner.l"
-{ return STATIC_ASSERT; }
+{ return _STATIC_ASSERT; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 75 "scanner.l"
-{ return THREAD_LOCAL; }
+{ return _THREAD_LOCAL; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
@@ -1292,52 +1292,52 @@ YY_RULE_SETUP
 case 47:
 YY_RULE_SETUP
 #line 80 "scanner.l"
-{ return I_CONSTANT; }
+{ return INTEGER_CONSTANT; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
 #line 81 "scanner.l"
-{ return I_CONSTANT; }
+{ return INTEGER_CONSTANT; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 82 "scanner.l"
-{ return I_CONSTANT; }
+{ return INTEGER_CONSTANT; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 83 "scanner.l"
-{ return I_CONSTANT; }
+{ return INTEGER_CONSTANT; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 85 "scanner.l"
-{ return F_CONSTANT; }
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 86 "scanner.l"
-{ return F_CONSTANT; }
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 87 "scanner.l"
-{ return F_CONSTANT; }
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
 #line 88 "scanner.l"
-{ return F_CONSTANT; }
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
 #line 89 "scanner.l"
-{ return F_CONSTANT; }
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
 #line 90 "scanner.l"
-{ return F_CONSTANT; }
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 57:
 /* rule 57 can match eol */

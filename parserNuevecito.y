@@ -11,7 +11,7 @@ extern char* lineptr;
 #define YYERROR_VERBOSE 1
 %}
 
-%token	IDENTIFIER I_CONSTANT F_CONSTANT STRING_LITERAL FUNC_NAME SIZEOF
+%token	IDENTIFIER INTEGER_CONSTANT FLOATING_CONSTANT STRING_LITERAL FUNC_NAME SIZEOF
 %token	PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token	AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token	SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
@@ -20,13 +20,13 @@ extern char* lineptr;
 
 %token	TYPEDEF EXTERN STATIC AUTO REGISTER INLINE
 %token	CONST RESTRICT VOLATILE
-%token	BOOL CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE VOID
-%token	COMPLEX IMAGINARY 
+%token	_BOOL CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE VOID
+%token	_COMPLEX _IMAGINARY
 %token	STRUCT UNION ENUM ELLIPSIS
 
 %token	CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
-%token	ALIGNAS ALIGNOF ATOMIC GENERIC NORETURN STATIC_ASSERT THREAD_LOCAL
+%token	_ALIGNAS _ALIGNOF _ATOMIC _GENERIC _NORETURN _STATIC_ASSERT _THREAD_LOCAL
 
 %nonassoc "then"
 %nonassoc ELSE
@@ -41,12 +41,12 @@ primary_expression
 	| constant
 	| string
 	| '(' expression ')'
-	| generic_selection
+	| _GENERIC_selection
 	;
 
 constant
-	: I_CONSTANT		/* includes character_constant */
-	| F_CONSTANT
+	: INTEGER_CONSTANT		/* includes character_constant */
+	| FLOATING_CONSTANT
 	| ENUMERATION_CONSTANT	/* after it has been defined as such */
 	;
 
@@ -59,16 +59,16 @@ string
 	| FUNC_NAME
 	;
 
-generic_selection
-	: GENERIC '(' assignment_expression ',' generic_assoc_list ')'
+_GENERIC_selection
+	: _GENERIC '(' assignment_expression ',' _GENERIC_assoc_list ')'
 	;
 
-generic_assoc_list
-	: generic_association
-	| generic_assoc_list ',' generic_association
+_GENERIC_assoc_list
+	: _GENERIC_association
+	| _GENERIC_assoc_list ',' _GENERIC_association
 	;
 
-generic_association
+_GENERIC_association
 	: type_name ':' assignment_expression
 	| DEFAULT ':' assignment_expression
 	;
@@ -98,7 +98,7 @@ unary_expression
 	| unary_operator cast_expression
 	| SIZEOF unary_expression
 	| SIZEOF '(' type_name ')'
-	| ALIGNOF '(' type_name ')'
+	| _ALIGNOF '(' type_name ')'
 	;
 
 unary_operator
@@ -209,7 +209,7 @@ constant_expression
 declaration
 	: declaration_specifiers ';'
 	| declaration_specifiers init_declarator_list ';'
-	| static_assert_declaration
+	| _STATIC_ASSERT_declaration
 	;
 
 declaration_specifiers
@@ -239,7 +239,7 @@ storage_class_specifier
 	: TYPEDEF	{typedef_name_flag = 1;}
 	| EXTERN
 	| STATIC
-	| THREAD_LOCAL
+	| _THREAD_LOCAL
 	| AUTO
 	| REGISTER
 	;
@@ -254,9 +254,9 @@ type_specifier
 	| DOUBLE
 	| SIGNED
 	| UNSIGNED
-	| BOOL
-	| COMPLEX
-	| IMAGINARY	  	/* non-mandated extension */
+	| _BOOL
+	| _COMPLEX
+	| _IMAGINARY	  	/* non-mandated extension */
 	| struct_or_union_specifier
 	| enum_specifier
 	| TYPEDEF_NAME		/* after it has been defined as such */
@@ -281,7 +281,7 @@ struct_declaration_list
 struct_declaration
 	: specifier_qualifier_list ';'	/* for anonymous struct/union */
 	| specifier_qualifier_list struct_declarator_list ';'
-	| static_assert_declaration
+	| _STATIC_ASSERT_declaration
 	;
 
 specifier_qualifier_list
@@ -324,17 +324,17 @@ type_qualifier
 	: CONST
 	| RESTRICT
 	| VOLATILE
-	| ATOMIC
+	| _ATOMIC
 	;
 
 function_specifier
 	: INLINE
-	| NORETURN
+	| _NORETURN
 	;
 
 alignment_specifier
-	: ALIGNAS '(' type_name ')'
-	| ALIGNAS '(' constant_expression ')'
+	: _ALIGNAS '(' type_name ')'
+	| _ALIGNAS '(' constant_expression ')'
 	;
 
 declarator
@@ -455,8 +455,8 @@ designator
 	| '.' IDENTIFIER
 	;
 
-static_assert_declaration
-	: STATIC_ASSERT '(' constant_expression ',' STRING_LITERAL ')' ';'
+_STATIC_ASSERT_declaration
+	: _STATIC_ASSERT '(' constant_expression ',' STRING_LITERAL ')' ';'
 	;
 
 statement
