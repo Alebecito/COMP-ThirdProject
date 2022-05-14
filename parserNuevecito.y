@@ -256,10 +256,10 @@ type_specifier
 	| UNSIGNED
 	| _BOOL
 	| _COMPLEX
-	| _IMAGINARY	  	/* non-mandated extension */
+	| _IMAGINARY
 	| struct_or_union_specifier
 	| enum_specifier
-	| TYPEDEF_NAME		/* after it has been defined as such */
+	| TYPEDEF_NAME
 	;
 
 struct_or_union_specifier

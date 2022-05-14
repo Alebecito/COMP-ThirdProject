@@ -14,7 +14,8 @@ integer-suffix   (((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))
 CP  (u|U|L)
 SP  (u8|u|U|L)
 escape-sequence   (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
-whitespace  [\t\v\n\f]
+whitespace  [\t\v\f]
+newline [\n]
 
 %{
     // #include "globals.h"
@@ -29,123 +30,123 @@ whitespace  [\t\v\n\f]
 %}
 
 %%
-"auto"					{ return(AUTO); }
-"break"					{ return(BREAK); }
-"case"					{ return(CASE); }
-"char"					{ return(CHAR); }
-"const"					{ return(CONST); }
-"continue"				{ return(CONTINUE); }
-"default"				{ return(DEFAULT); }
-"do"					{ return(DO); }
-"double"				{ return(DOUBLE); }
-"else"					{ return(ELSE); }
-"enum"					{ return(ENUM); }
-"extern"				{ return(EXTERN); }
-"float"					{ return(FLOAT); }
-"for"					{ return(FOR); }
-"goto"					{ return(GOTO); }
-"if"					{ return(IF); }
-"inline"				{ return(INLINE); }
-"int"					{ return(INT); }
-"long"					{ return(LONG); }
-"register"				{ return(REGISTER); }
-"restrict"				{ return(RESTRICT); }
-"return"				{ return(RETURN); }
-"short"					{ return(SHORT); }
-"signed"				{ return(SIGNED); }
-"sizeof"				{ return(SIZEOF); }
-"static"				{ return(STATIC); }
-"struct"				{ return(STRUCT); }
-"switch"				{ return(SWITCH); }
-"typedef"				{ return(TYPEDEF); }
-"union"					{ return(UNION); }
-"unsigned"				{ return(UNSIGNED); }
-"void"					{ return(VOID); }
-"volatile"				{ return(VOLATILE); }
-"while"					{ return(WHILE); }
-"_Alignas"                              { return _ALIGNAS; }
-"_Alignof"                              { return _ALIGNOF; }
-"_Atomic"                               { return _ATOMIC; }
-"_Bool"                                 { return _BOOL; }
-"_Complex"                              { return _COMPLEX; }
-"_Generic"                              { return _GENERIC; }
-"_Imaginary"                            { return _IMAGINARY; }
-"_Noreturn"                             { return _NORETURN; }
-"_Static_assert"                        { return _STATIC_ASSERT; }
-"_Thread_local"                         { return _THREAD_LOCAL; }
-"__func__"                              { return FUNC_NAME; }
+"auto"					{ COLUMN_NUMBER; return(AUTO); }
+"break"					{ COLUMN_NUMBER; return(BREAK); }
+"case"					{ COLUMN_NUMBER; return(CASE); }
+"char"					{ COLUMN_NUMBER; return(CHAR); }
+"const"					{ COLUMN_NUMBER; return(CONST); }
+"continue"				{ COLUMN_NUMBER; return(CONTINUE); }
+"default"				{ COLUMN_NUMBER; return(DEFAULT); }
+"do"					{ COLUMN_NUMBER; return(DO); }
+"double"				{ COLUMN_NUMBER; return(DOUBLE); }
+"else"					{ COLUMN_NUMBER; return(ELSE); }
+"enum"					{ COLUMN_NUMBER; return(ENUM); }
+"extern"				{ COLUMN_NUMBER; return(EXTERN); }
+"float"					{ COLUMN_NUMBER; return(FLOAT); }
+"for"					{ COLUMN_NUMBER; return(FOR); }
+"goto"					{ COLUMN_NUMBER; return(GOTO); }
+"if"					{ COLUMN_NUMBER; return(IF); }
+"inline"				{ COLUMN_NUMBER; return(INLINE); }
+"int"					{ COLUMN_NUMBER; return(INT); }
+"long"					{ COLUMN_NUMBER; return(LONG); }
+"register"				{ COLUMN_NUMBER; return(REGISTER); }
+"restrict"				{ COLUMN_NUMBER; return(RESTRICT); }
+"return"				{ COLUMN_NUMBER; return(RETURN); }
+"short"					{ COLUMN_NUMBER; return(SHORT); }
+"signed"				{ COLUMN_NUMBER; return(SIGNED); }
+"sizeof"				{ COLUMN_NUMBER; return(SIZEOF); }
+"static"				{ COLUMN_NUMBER; return(STATIC); }
+"struct"				{ COLUMN_NUMBER; return(STRUCT); }
+"switch"				{ COLUMN_NUMBER; return(SWITCH); }
+"typedef"				{ COLUMN_NUMBER; return(TYPEDEF); }
+"union"					{ COLUMN_NUMBER; return(UNION); }
+"unsigned"				{ COLUMN_NUMBER; return(UNSIGNED); }
+"void"					{ COLUMN_NUMBER; return(VOID); }
+"volatile"				{ COLUMN_NUMBER; return(VOLATILE); }
+"while"					{ COLUMN_NUMBER; return(WHILE); }
+"_Alignas"              { COLUMN_NUMBER; return _ALIGNAS; }
+"_Alignof"              { COLUMN_NUMBER; return _ALIGNOF; }
+"_Atomic"               { COLUMN_NUMBER; return _ATOMIC; }
+"_Bool"                 { COLUMN_NUMBER; return _BOOL; }
+"_Complex"              { COLUMN_NUMBER; return _COMPLEX; }
+"_Generic"              { COLUMN_NUMBER; return _GENERIC; }
+"_Imaginary"            { COLUMN_NUMBER; return _IMAGINARY; }
+"_Noreturn"             { COLUMN_NUMBER; return _NORETURN; }
+"_Static_assert"        { COLUMN_NUMBER; return _STATIC_ASSERT; }
+"_Thread_local"         { COLUMN_NUMBER; return _THREAD_LOCAL; }
+"__func__"              { COLUMN_NUMBER; return FUNC_NAME; }
 
-{nondigit}{alphabetical-digit}*					{ return check_type(); }
+{nondigit}{alphabetical-digit}*					                                                            { COLUMN_NUMBER; return check_type(); }
 
-{hexadecimal-prefix}{hexadecimal-digit}+{integer-suffix}?				{ return INTEGER_CONSTANT; }
-{nonzero-digit}{digit}*{integer-suffix}?				{ return INTEGER_CONSTANT; }
-"0"{octal-digit}*{integer-suffix}?				{ return INTEGER_CONSTANT; }
-{CP}?"'"([^'\\\n]|{escape-sequence})+"'"		{ return INTEGER_CONSTANT; }
+{hexadecimal-prefix}{hexadecimal-digit}+{integer-suffix}?			                                        { COLUMN_NUMBER; return INTEGER_CONSTANT; }
+{nonzero-digit}{digit}*{integer-suffix}?				                                                    { COLUMN_NUMBER; return INTEGER_CONSTANT; }
+"0"{octal-digit}*{integer-suffix}?				                                                            { COLUMN_NUMBER; return INTEGER_CONSTANT; }
+{CP}?"'"([^'\\\n]|{escape-sequence})+"'"		                                                            { COLUMN_NUMBER; return INTEGER_CONSTANT; }
 
-{digit}+{exponent-part}{floating-suffix}?				{ return FLOATING_CONSTANT; }
-{digit}*"."{digit}+{exponent-part}?{floating-suffix}?			{ return FLOATING_CONSTANT; }
-{digit}+"."{exponent-part}?{floating-suffix}?			{ return FLOATING_CONSTANT; }
-{hexadecimal-prefix}{hexadecimal-digit}+{binary-exponent-part}{floating-suffix}?			{ return FLOATING_CONSTANT; }
-{hexadecimal-prefix}{hexadecimal-digit}*"."{hexadecimal-digit}+{binary-exponent-part}{floating-suffix}?			{ return FLOATING_CONSTANT; }
-{hexadecimal-prefix}{hexadecimal-digit}+"."{binary-exponent-part}{floating-suffix}?			{ return FLOATING_CONSTANT; }
+{digit}+{exponent-part}{floating-suffix}?				                                                    { COLUMN_NUMBER; return FLOATING_CONSTANT; }
+{digit}*"."{digit}+{exponent-part}?{floating-suffix}?			                                            { COLUMN_NUMBER; return FLOATING_CONSTANT; }
+{digit}+"."{exponent-part}?{floating-suffix}?			                                                    { COLUMN_NUMBER; return FLOATING_CONSTANT; }
+{hexadecimal-prefix}{hexadecimal-digit}+{binary-exponent-part}{floating-suffix}?			                { COLUMN_NUMBER; return FLOATING_CONSTANT; }
+{hexadecimal-prefix}{hexadecimal-digit}*"."{hexadecimal-digit}+{binary-exponent-part}{floating-suffix}?		{ COLUMN_NUMBER; return FLOATING_CONSTANT; }
+{hexadecimal-prefix}{hexadecimal-digit}+"."{binary-exponent-part}{floating-suffix}?			                { COLUMN_NUMBER; return FLOATING_CONSTANT; }
 
-({SP}?\"([^"\\\n]|{escape-sequence})*\"{whitespace}*)+	{ return STRING_LITERAL; }
+({SP}?\"([^"\\\n]|{escape-sequence})*\"{whitespace}*)+	{COLUMN_NUMBER; return STRING_LITERAL; }
 
-"..."					{ return ELLIPSIS; }
-">>="					{ return RIGHT_ASSIGN; }
-"<<="					{ return LEFT_ASSIGN; }
-"+="					{ return ADD_ASSIGN; }
-"-="					{ return SUB_ASSIGN; }
-"*="					{ return MUL_ASSIGN; }
-"/="					{ return DIV_ASSIGN; }
-"%="					{ return MOD_ASSIGN; }
-"&="					{ return AND_ASSIGN; }
-"^="					{ return XOR_ASSIGN; }
-"|="					{ return OR_ASSIGN; }
-">>"					{ return RIGHT_OP; }
-"<<"					{ return LEFT_OP; }
-"++"					{ return INC_OP; }
-"--"					{ return DEC_OP; }
-"->"					{ return PTR_OP; }
-"&&"					{ return AND_OP; }
-"||"					{ return OR_OP; }
-"<="					{ return LE_OP; }
-">="					{ return GE_OP; }
-"=="					{ return EQ_OP; }
-"!="					{ return NE_OP; }
-";"					{ return ';'; }
-("{"|"<%")				{ return '{'; }
-("}"|"%>")				{ return '}'; }
-","					{ return ','; }
-":"					{ return ':'; }
-"="					{ return '='; }
-"("					{ return '('; }
-")"					{ return ')'; }
-("["|"<:")				{ return '['; }
-("]"|":>")				{ return ']'; }
-"."					{ return '.'; }
-"&"					{ return '&'; }
-"!"					{ return '!'; }
-"~"					{ return '~'; }
-"-"					{ return '-'; }
-"+"					{ return '+'; }
-"*"					{ return '*'; }
-"/"					{ return '/'; }
-"%"					{ return '%'; }
-"<"					{ return '<'; }
-">"					{ return '>'; }
-"^"					{ return '^'; }
-"|"					{ return '|'; }
-"?"					{ return '?'; }
+"..."					{ COLUMN_NUMBER; return ELLIPSIS; }
+">>="					{ COLUMN_NUMBER; return RIGHT_ASSIGN; }
+"<<="					{ COLUMN_NUMBER; return LEFT_ASSIGN; }
+"+="					{ COLUMN_NUMBER; return ADD_ASSIGN; }
+"-="					{ COLUMN_NUMBER; return SUB_ASSIGN; }
+"*="					{ COLUMN_NUMBER; return MUL_ASSIGN; }
+"/="					{ COLUMN_NUMBER; return DIV_ASSIGN; }
+"%="					{ COLUMN_NUMBER; return MOD_ASSIGN; }
+"&="					{ COLUMN_NUMBER; return AND_ASSIGN; }
+"^="					{ COLUMN_NUMBER; return XOR_ASSIGN; }
+"|="					{ COLUMN_NUMBER; return OR_ASSIGN; }
+">>"					{ COLUMN_NUMBER; return RIGHT_OP; }
+"<<"					{ COLUMN_NUMBER; return LEFT_OP; }
+"++"					{ COLUMN_NUMBER; return INC_OP; }
+"--"					{ COLUMN_NUMBER; return DEC_OP; }
+"->"					{ COLUMN_NUMBER; return PTR_OP; }
+"&&"					{ COLUMN_NUMBER; return AND_OP; }
+"||"					{ COLUMN_NUMBER; return OR_OP; }
+"<="					{ COLUMN_NUMBER; return LE_OP; }
+">="					{ COLUMN_NUMBER; return GE_OP; }
+"=="					{ COLUMN_NUMBER; return EQ_OP; }
+"!="					{ COLUMN_NUMBER; return NE_OP; }
+";"					    { COLUMN_NUMBER; return ';'; }
+("{"|"<%")				{ COLUMN_NUMBER; return '{'; }
+("}"|"%>")				{ COLUMN_NUMBER; return '}'; }
+","					    { COLUMN_NUMBER; return ','; }
+":"					    { COLUMN_NUMBER; return ':'; }
+"="					    { COLUMN_NUMBER; return '='; }
+"("					    { COLUMN_NUMBER; return '('; }
+")"					    { COLUMN_NUMBER; return ')'; }
+("["|"<:")				{ COLUMN_NUMBER; return '['; }
+("]"|":>")				{ COLUMN_NUMBER; return ']'; }
+"."					    { COLUMN_NUMBER; return '.'; }
+"&"					    { COLUMN_NUMBER; return '&'; }
+"!"					    { COLUMN_NUMBER; return '!'; }
+"~"					    { COLUMN_NUMBER; return '~'; }
+"-"					    { COLUMN_NUMBER; return '-'; }
+"+"					    { COLUMN_NUMBER; return '+'; }
+"*"					    { COLUMN_NUMBER; return '*'; }
+"/"					    { COLUMN_NUMBER; return '/'; }
+"%"					    { COLUMN_NUMBER; return '%'; }
+"<"					    { COLUMN_NUMBER; return '<'; }
+">"					    { COLUMN_NUMBER; return '>'; }
+"^"					    { COLUMN_NUMBER; return '^'; }
+"|"					    { COLUMN_NUMBER; return '|'; }
+"?"					    { COLUMN_NUMBER; return '?'; }
 
-{whitespace}+					{ /* whitespace separates tokens */ }
-.					{ /* discard bad characters */ }
+{whitespace}+           { COLUMN_NUMBER; }
+{newline} 				{ next_column = 1; }
+.					    { }
 
 %%
 
-int yywrap(void)        /* called at end of input */
-{
-    return 1;           /* terminate now */
+int yywrap(void) {
+    return 1;         
 }
 
 int get_symbol_idx (char* value) {
