@@ -1,7 +1,5 @@
-void copyt(int n)
-{
-typedef int B[n];
-n += 1;
-B a;
-int b[n];
+void copyt(int n) {
+for (int i = 0 i < 100; i){
+    print("Hola\n");
+};
 }

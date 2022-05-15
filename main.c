@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     symbolTable.nullsym = 0;
     symbolTable.size = 128;
     // #ifdef YYDEBUG
-    yydebug = 1;
+    // yydebug = 1;
     // #endif
     typedef_name_flag = 0;
     // printf("QUE LE PASE WEON2\n");

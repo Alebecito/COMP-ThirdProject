@@ -8,6 +8,7 @@ extern int yylineno;
 extern int column;
 extern FILE* yyin;
 extern char* lineptr;
+extern void eat_to_newline(const char *str);
 #define YYERROR_VERBOSE 1
 %}
 
@@ -492,6 +493,7 @@ block_item
 expression_statement
 	: ';'
 	| expression ';'
+	| error ';' {customError("Hola");}
 	;
 
 selection_statement
@@ -547,3 +549,18 @@ int yyerror(const char *str) {
 		fprintf(stderr," ");
     fprintf(stderr,"^\n");
 }
+
+int customError(const char *str) {
+	fprintf(stderr, "error: %s, line %d, column %d\n", str, yylineno, column);
+}
+
+void eat_to_newline(const char *str) {
+	if (str[0] == '\0') {
+		yyerror;		
+	} else {
+		customError(str);
+	}
+    int c;
+    while ((c = getchar()) != EOF && c != '\n');
+}
+
