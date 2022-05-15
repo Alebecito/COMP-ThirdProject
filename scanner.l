@@ -14,7 +14,7 @@ integer-suffix   (((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))
 CP  (u|U|L)
 SP  (u8|u|U|L)
 escape-sequence   (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
-whitespace  [\t\v\f]
+whitespace  [ ]
 newline [\n]
 
 %{
@@ -24,9 +24,31 @@ newline [\n]
     #include "globals.h"
     static int next_column = 1;
     int column = 1;
-    char* line;
+    char* line = NULL;
     #define COLUMN_NUMBER column = next_column; next_column += strlen(yytext)
     int check_type(void);
+    size_t line_alloc = 0;
+    ssize_t line_sent, line_len = 0;
+
+    #define YY_INPUT(buf, result, max_size) \
+        ssize_t available = line_len - line_sent; \
+        if (!available) { \
+            line_sent = 0; \
+            available = getline(&line, &line_alloc, yyin); \
+            if (available < 0) { \
+                available = 0; \
+            } \
+            line_len = available; \
+        } \
+        if (available > max_size) available = max_size; \
+        memcpy(buf, line + line_sent, available); \
+        line_sent += available; \
+        if (!available) { \
+            free(line); \
+            line = NULL; \
+            line_alloc = line_sent = line_len = 0; \
+        } \
+        result = available;
 %}
 
 %%
@@ -200,7 +222,7 @@ void show_symbol_table() {
 
 
 int check_type(void) {
-    printf("CHECK_TYPE: %d\n", typedef_name_flag);
+    //printf("CHECK_TYPE: %d\n", typedef_name_flag);
     Symbol new_symbol;
     if (typedef_name_flag == 1) {
         new_symbol.type = TYPEDEF_NAME;

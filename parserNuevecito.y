@@ -9,6 +9,8 @@ extern int column;
 extern FILE* yyin;
 extern char* lineptr;
 extern void eat_to_newline(const char *str);
+extern char* line;
+extern char* filename;
 #define YYERROR_VERBOSE 1
 %}
 
@@ -127,6 +129,7 @@ additive_expression
 	: multiplicative_expression
 	| additive_expression '+' multiplicative_expression
 	| additive_expression '-' multiplicative_expression
+	| error '+' multiplicative_expression {yyerror("errorcito");}
 	;
 
 shift_expression
@@ -542,12 +545,53 @@ declaration_list
 %%
 #include <stdio.h>
 
+// char* removeWhitespaces(char *str) {
+// 	int i = 0;
+// 	char* newString = malloc (strlen(str) + 1);
+// 	while (str[i] == ' ') {
+// 		i++;
+// 	}
+// 	while (str[i] != '\0') {
+// 		strncat(newString, &str[i], 1);
+// 		i++;
+// 	}
+// 	return newString;
+// }
+
+void red() {
+	printf("\033[1;31m");
+}
+
+void yellow() {
+	printf("\033[1;33m");
+}
+
+void resetColor() {
+	printf("\033[0m");
+}
+
 int yyerror(const char *str) {
-    fprintf(stderr, "error: %s, line %d, column %d\n", str, yylineno, column);
-	//fprintf(stderr,"%s", lineptr);
+	yellow();
+    printf("prueba.c:%d:%d: ", yylineno, column);
+	red();
+	printf("error: ");
+	resetColor();
+	printf("%s\n", str);
+	char *newLine = NULL;
+
+	if (!strstr(line, "\n")) {
+		newLine = malloc(strlen(line) + 2);
+		strcpy(newLine, line);
+		strcat(newLine, "\n");
+	} else {
+		newLine = malloc(strlen(line) + 1);
+		strcpy(newLine, line);
+	}
+	printf("%s", newLine);
 	for(int i = 0; i < column - 1; i++)
-		fprintf(stderr," ");
-    fprintf(stderr,"^\n");
+		printf(" ");
+	red();
+    printf("^\n");
 }
 
 int customError(const char *str) {
