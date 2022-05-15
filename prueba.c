@@ -1,7 +1,7 @@
-void copyt(int n)
-{
-typedef int B[n];
-n += 1;
-B a;
-int b[n];
+void main() {
+    nt a = 5 + 5;
+}
+
+void main() {
+    int a = 5 + 5
 }
