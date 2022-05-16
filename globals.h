@@ -3,7 +3,6 @@
 
 int typedef_name_flag;
 
-
 typedef struct symbol {
     int type; 
     char* lexeme; //yytext()
@@ -18,7 +17,7 @@ typedef struct symtable {
 SymTable symbolTable;
 
 void add_symbol_to_symbolTable(Symbol symbol);
-Symbol_Type get_symbol_type(char* value);
+int get_symbol_type(char* value);
 int get_symbol_idx (char* name);
 
 // int get_ppid_idx (char* name);

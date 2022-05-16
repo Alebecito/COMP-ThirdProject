@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include "globals.h"
 extern int yylex();
 int yyerror();
 extern int yylineno;
@@ -185,7 +186,7 @@ declaration
 declaration_specifiers
 	: storage_class_specifier  
 	| storage_class_specifier declaration_specifiers 
-	| type_specifier  
+	| type_specifier 
 	| type_specifier declaration_specifiers 
 	| type_qualifier 
 	| type_qualifier declaration_specifiers
@@ -232,11 +233,11 @@ type_specifier
 	;
 
 struct_or_union_specifier
-	: struct_or_union '{' struct_declaration_list '}'
-	| struct_or_union IDENTIFIER '{' struct_declaration_list '}'
-	| struct_or_union IDENTIFIER
-	| struct_or_union IDENTIFIER '{' error '}' 
-  	| struct_or_union '{' error '}'
+	: struct_or_union '{' struct_declaration_list '}'  {printf("STRUCT1\n");}
+	| struct_or_union IDENTIFIER '{' struct_declaration_list '}' {printf("STRUCT2\n");}
+	| struct_or_union IDENTIFIER {printf("STRUCT3\n");}
+	| struct_or_union IDENTIFIER '{' error '}' {printf("STRUCT4\n");}
+  	| struct_or_union '{' error '}' {printf("STRUCT5\n");}
 	;
 
 struct_or_union
@@ -255,8 +256,8 @@ struct_declaration
 	;
 
 specifier_qualifier_list
-	: type_specifier 
-	| type_specifier specifier_qualifier_list   
+	: type_specifier {typedef_name_flag = 2;}
+	| type_specifier specifier_qualifier_list {typedef_name_flag = 2;}
 	| type_qualifier 
 	| type_qualifier specifier_qualifier_list
 	;
@@ -525,20 +526,6 @@ declaration_list
 	;
 %%
 
-int main(int argc, char **argv) {
-	#ifdef YYDEBUG
-  		yydebug = 1;
-	#endif
-
-    FILE* source_file = fopen("prueba.c", "r");
-    // source_file = new_file;
-    yyin = source_file;
-	
-  	yyparse();
-	/* printf("yysymbol_kind_t: %d", yysymbol_kind_t); */
-	/* printf("yytext: %s\n",yytext); */
-	return 0;
-}
 
 int yyerror(const char *str) {
     fprintf(stderr, "error: %s, line %d, column %d\n", str, yylineno, column);

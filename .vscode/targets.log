@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Fri May 13 15:18:16 2022
+# Make data base, printed on Sun May 15 23:48:19 2022
 
 # Variables
 
@@ -17,7 +17,7 @@ make: *** No rule to make target 'all'.  Stop.
 # automatic
 ?F = $(notdir $?)
 # environment
-WSLENV = ELECTRON_RUN_AS_NODE/w:
+WSLENV = VSCODE_WSL_EXT_LOCATION/up
 # default
 .SHELLFLAGS := -c
 # environment
@@ -35,7 +35,7 @@ SHELL = /bin/sh
 # environment
 VSCODE_NLS_CONFIG = {"locale":"en","availableLanguages":{}}
 # environment
-_ = /mnt/c/Users/Eli02/AppData/Local/Programs/Microsoft VS Code/bin/code
+_ = /home/elias/.vscode-server/bin/da15b6fd3ef856477bf6f4fb29ba1b7af717770d/node
 # makefile (from 'makefile', line 1)
 MAKEFILE_LIST :=  makefile
 # 'override' directive
@@ -55,7 +55,7 @@ PATH = /home/elias/.vscode-server/bin/da15b6fd3ef856477bf6f4fb29ba1b7af717770d/b
 # environment
 VSCODE_LOG_STACK = false
 # environment
-VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-dc5a908b-ade5-49db-b267-d91be53a21e7.sock
+VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-130637fb-f331-40e9-a283-ff6b9f58a80b.sock
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # environment
@@ -71,7 +71,7 @@ PWD = /mnt/c/Users/Eli02/OneDrive - Estudiantes ITCR/TEC5/COMP/Proyectos/Proyect
 # default
 .LOADED := 
 # environment
-WSL_INTEROP = /run/WSL/1005_interop
+WSL_INTEROP = /run/WSL/157_interop
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
@@ -81,7 +81,7 @@ LESSCLOSE = /usr/bin/lesspipe %s %s
 # environment
 LOGNAME = elias
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
@@ -95,7 +95,7 @@ MAKECMDGOALS := all
 # environment
 LIBL_ALWAYS_INDIRECT = 1
 # environment
-SHLVL = 1
+SHLVL = 0
 # default
 MAKE_VERSION := 4.2.1
 # environment
@@ -103,7 +103,7 @@ USER = elias
 # makefile
 .DEFAULT_GOAL := parserC
 # environment
-NAME = Code
+NAME = DESKTOP-UC5JLP6
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
 # environment
@@ -161,9 +161,9 @@ MOTD_SHOWN = update-motd
 
 # Directories
 
-# . (device 68, inode 3377699721357786): 16 files, no impossibilities.
+# . (device 68, inode 3377699721357786): 19 files, no impossibilities.
 
-# 16 files, no impossibilities in 1 directories.
+# 19 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -187,18 +187,18 @@ all:
 # Not a target:
 makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-05-11 16:37:36.6483259
+#  Last modified 2022-05-13 16:31:05.3218631
 #  File has been updated.
 #  Successfully updated.
 
-parserC: scanner.l parserNuevecito.y
+parserC: scanner.l parserNuevecito.y parserCito.c
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'makefile', line 3):
-	bison -d -v -t parserNuevecito.y
+	bison -d -t -v parserNuevecito.y
 	flex scanner.l
-	gcc parserNuevecito.tab.c lex.yy.c -lfl -o parserC
+	gcc -g parserNuevecito.tab.c lex.yy.c parserCito.c -lfl -o parserC
 
 # Not a target:
 .DEFAULT:
@@ -212,20 +212,26 @@ parserNuevecito.y:
 #  Modification time never checked.
 #  File has not been updated.
 
+# Not a target:
+parserCito.c:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
 # files hash-table stats:
-# Load=7/1024=1%, Rehash=0, Collisions=0/19=0%
+# Load=8/1024=1%, Rehash=0, Collisions=0/21=0%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 21 / storage = 231 B / avg = 11 B
-# current buf: size = 8162 B / used = 231 B / count = 21 / avg = 11 B
+# strcache buffers: 1 (0) / strings = 25 / storage = 277 B / avg = 11 B
+# current buf: size = 8162 B / used = 277 B / count = 25 / avg = 11 B
 
-# strcache performance: lookups = 29 / hit rate = 27%
+# strcache performance: lookups = 33 / hit rate = 24%
 # hash-table stats:
-# Load=21/8192=0%, Rehash=0, Collisions=1/29=3%
-# Finished Make data base on Fri May 13 15:18:16 2022
+# Load=25/8192=0%, Rehash=0, Collisions=1/33=3%
+# Finished Make data base on Sun May 15 23:48:19 2022
 
  

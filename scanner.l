@@ -18,6 +18,7 @@
     size_t available = 0;
 
     size_t min(size_t a, size_t b);
+    
     #define YY_INPUT(buf,result,max_size) {\
         if(available <= 0) {\
             consumed = 0;\
@@ -217,7 +218,7 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 {return} {COLUMN_NUMBER; return RETURN;}
 
 
-{identifier} {COLUMN_NUMBER; return IDENTIFIER;}
+{identifier} {COLUMN_NUMBER; return check_type();}
 
 {integer-constant} {COLUMN_NUMBER; return INTEGER_CONSTANT;}
 {floating-constant} {COLUMN_NUMBER; return FLOATING_CONSTANT;}
@@ -264,7 +265,7 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 {assignment-operators} {COLUMN_NUMBER; return ASSIGNMENT_OPERATOR;}
 
 {string-literal} {COLUMN_NUMBER; return STRING_LITERAL;}
-{header-name} {COLUMN_NUMBER; return HEADER_NAME;}
+{header-name} {COLUMN_NUMBER; return HEADER_NAME;} 
 
 [ ] {COLUMN_NUMBER;}
 \n {next_column = 1;}
@@ -275,4 +276,81 @@ constant {integer-constant}|{floating-constant}|{enumeration-constant}|{characte
 
 size_t min(size_t a, size_t b) {
     return b < a ? b : a;
+}
+
+int get_symbol_idx (char* value) {
+    for (int i = 0 ; i < symbolTable.nullsym; i++){
+        if (strcmp(symbolTable.symbols[i].lexeme, value) == 0)
+            return i;
+    }
+    return -1;
+}
+
+int get_symbol_type(char* value) {
+    for(int i = 0 ; i < symbolTable.nullsym; i++) {
+        if (strcmp(symbolTable.symbols[i].lexeme, value) == 0)
+            return symbolTable.symbols[i].type;
+    }
+    return -1;
+}
+
+void add_symbol_to_symbolTable(Symbol symbol) {
+    if (symbolTable.nullsym >= symbolTable.size ) {
+        symbolTable.size *= 2;
+        Symbol* new_symbolTable = realloc(symbolTable.symbols, symbolTable.size * sizeof(Symbol));
+        if (new_symbolTable == NULL) {
+            printf("Unable to allocate enough memory for symbol table");
+            exit(-1);
+        } else {
+            symbolTable.symbols = new_symbolTable;
+        }
+    }   
+    int symbol_idx = get_symbol_idx(symbol.lexeme);
+    if (symbol_idx == -1) {
+        symbolTable.symbols[symbolTable.nullsym++] = symbol;
+    } else {
+        symbolTable.symbols[symbol_idx] = symbol;
+    }
+}
+
+void show_symbol_table() {
+    printf("\n********** Symbol Table **********\n");
+    printf("Length: %d \n", symbolTable.nullsym);
+    for (int i = 0; i < symbolTable.nullsym; i++) {
+        printf("\t%s -> %d\n", symbolTable.symbols[i].lexeme, symbolTable.symbols[i].type);
+
+        // if (strchr(symbolTable.pp_ids[i].lexeme, '"') != 0) {
+        //     printf("%s -> %s\n", symbolTable.pp_ids[i].name, symbolTable.pp_ids[i].lexeme);
+        // }
+    }
+    printf("Length: %d. Max size: %d \n", symbolTable.nullsym, symbolTable.size);
+    printf("********************\n\n");
+}
+
+
+int check_type(void) {
+    printf("CHECK_TYPE: %d\n", typedef_name_flag);
+    Symbol new_symbol;
+    if (typedef_name_flag == 1) {
+        new_symbol.type = TYPEDEF_NAME;
+        new_symbol.lexeme = malloc(sizeof(char) * (strlen(yytext) + 1));
+        strcpy(new_symbol.lexeme, yytext);
+        add_symbol_to_symbolTable(new_symbol);
+        typedef_name_flag = 0;
+        // show_symbol_table();
+        return TYPEDEF_NAME;
+    } 
+    else if (typedef_name_flag == 2) {
+        typedef_name_flag = 0;
+        if (get_symbol_type(yytext) != -1) {
+            return TYPEDEF_NAME; 
+        } else {
+            return IDENTIFIER;
+        }
+    }
+    else {
+        return IDENTIFIER;
+    }
+    return IDENTIFIER;
+    
 }
