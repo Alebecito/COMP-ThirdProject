@@ -1,11 +1,6 @@
-void copyt(int n) {
-for (int i = 0 i < 100; i){
-    print("Hola\n");
+voi copyt(in n) {
+    for (int i = 0 i < 100; i) {
+        a print("Hola\n");
+    }
+    b print("Hola2\n");
 };
-// void main() {
-//     nt a = 5 + 5;
-// }
-
-// void main() {
-//     int a = 5 + 5
-// }
