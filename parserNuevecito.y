@@ -56,7 +56,6 @@ primary_expression
 	| '(' expression ')'
 	| '(' error ')'
 	| _GENERIC_selection
-	| '(' error ')'
 	;
 
 constant
@@ -162,9 +161,9 @@ relational_expression
 	| relational_expression LE_OP shift_expression
 	| relational_expression GE_OP shift_expression
 	| error '<' shift_expression
-  	| error '>' shift_expression
-	| error LE_OP shift_expression
-  	| error GE_OP shift_expression
+  	| error '>' shift_expression 
+	| error LE_OP shift_expression 
+  	| error GE_OP shift_expression 
 	;
 
 equality_expression
@@ -314,7 +313,7 @@ struct_declaration_list
 	;
 
 struct_declaration
-	: specifier_qualifier_list ';'	/* for anonymous struct/union */
+	: specifier_qualifier_list ';'
 	| specifier_qualifier_list struct_declarator_list ';'
 	| _STATIC_ASSERT_declaration
 	| error ';'
@@ -356,7 +355,7 @@ enumerator_list
 	| error ',' enumerator
 	;
 
-enumerator	/* identifiers must be flagged as ENUMERATION_CONSTANT */
+enumerator
 	: enumeration_constant '=' constant_expression
 	| enumeration_constant
 	| error '=' constant_expression
@@ -387,8 +386,8 @@ declarator
 direct_declarator
 	: IDENTIFIER
 	| '(' declarator ')'
-	| direct_declarator '[' ']'
-	| direct_declarator '[' '*' ']'
+	| direct_declarator '[' ']' 
+	| direct_declarator '[' '*' ']' 
 	| direct_declarator '[' STATIC type_qualifier_list assignment_expression ']'
 	| direct_declarator '[' STATIC assignment_expression ']'
 	| direct_declarator '[' type_qualifier_list '*' ']'
@@ -399,8 +398,8 @@ direct_declarator
 	| direct_declarator '(' parameter_type_list ')'
 	| direct_declarator '(' ')'
 	| direct_declarator '(' identifier_list ')'
-	| direct_declarator '(' error ')'
-  	| error '(' error ')'
+	| direct_declarator '(' error ')' 
+  	//| error '(' error ')' 
   	| '(' error ')'
 	;
 
@@ -416,7 +415,6 @@ type_qualifier_list
 	: type_qualifier
 	| type_qualifier_list type_qualifier
 	;
-
 
 parameter_type_list
 	: parameter_list ',' ELLIPSIS
@@ -434,6 +432,8 @@ parameter_declaration
 	: declaration_specifiers declarator
 	| declaration_specifiers abstract_declarator
 	| declaration_specifiers
+	| error declarator
+	| error abstract_declarator
 	;
 
 identifier_list
@@ -476,7 +476,7 @@ direct_abstract_declarator
 	| direct_abstract_declarator '(' parameter_type_list ')'
 	| '[' error ']'
 	| direct_abstract_declarator '(' error ')'
-  	| direct_abstract_declarator '[' error ']'
+  	| direct_abstract_declarator '[' error ']' 
 	;
 
 initializer
@@ -530,7 +530,7 @@ labeled_statement
 compound_statement
 	: '{' '}'
 	| '{'  block_item_list '}'
-	| '{' error '}'
+	| '{' error '}' 
 	;
 
 block_item_list
@@ -546,16 +546,16 @@ block_item
 expression_statement
 	: ';'
 	| expression ';'
-	| error ';'
+	| error ';' 
 	;
 
 selection_statement
 	: IF '(' expression ')' statement ELSE statement
 	| IF '(' expression ')' statement %prec "then"
 	| SWITCH '(' expression ')' statement
-	| IF '(' error ')' statement
+	| IF '(' error ')' statement %prec "then"
   	| SWITCH '(' error ')' statement
-	//| IF '(' error ')' statement ELSE statement
+	| IF '(' error ')' statement ELSE statement
 	;
 
 iteration_statement
@@ -565,8 +565,8 @@ iteration_statement
 	| FOR '(' expression_statement expression_statement expression ')' statement
 	| FOR '(' declaration expression_statement ')' statement
 	| FOR '(' declaration expression_statement expression ')' statement
-	| DO error WHILE '(' expression ')' ';'
-  	| FOR '(' error')' statement
+	| DO error WHILE '(' expression ')' ';' 
+  	| FOR '(' error')' statement 
 	;
 
 jump_statement
