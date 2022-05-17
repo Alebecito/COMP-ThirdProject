@@ -19,9 +19,14 @@ int main(int argc, char **argv)
     symbolTable.nullsym = 0;
     symbolTable.size = 128;
     // #ifdef YYDEBUG
-    // yydebug = 1;
+    if (strcmp(argv[1], "1") == 0) {
+        printf("NO DEBUG");
+        yydebug = 1;
+    } else {
+        yydebug = 0;
+    }
     // #endif
-    typedef_name_flag = 0;
+    typedef_name_flag = 2;
     // printf("QUE LE PASE WEON2\n");
     FILE *source_file = fopen("prueba.c", "r");
     // source_file = new_file;

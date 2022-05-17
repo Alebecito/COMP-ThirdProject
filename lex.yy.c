@@ -2697,13 +2697,14 @@ int check_type(void) {
         new_symbol.lexeme = malloc(sizeof(char) * (strlen(yytext) + 1));
         strcpy(new_symbol.lexeme, yytext);
         add_symbol_to_symbolTable(new_symbol);
-        typedef_name_flag = 0;
-        // show_symbol_table();
+        typedef_name_flag = 2;
+        show_symbol_table();
         return TYPEDEF_NAME;
     } 
     else if (typedef_name_flag == 2) {
-        typedef_name_flag = 0;
-        if (get_symbol_type(yytext) != -1) {
+        typedef_name_flag = 2;
+        // printf("------------------ %d. CURRENT YYTEXT: %s\n", yylineno, yytext);
+        if (get_symbol_idx(yytext) != -1) {
             return TYPEDEF_NAME; 
         } else {
             return IDENTIFIER;

@@ -273,7 +273,7 @@ struct_or_union_specifier
 	;
 
 struct_or_union
-	: STRUCT
+	: STRUCT {typedef_name_flag = 4;}
 	| UNION
 	;
 
@@ -289,8 +289,8 @@ struct_declaration
 	;
 
 specifier_qualifier_list
-	: type_specifier specifier_qualifier_list {typedef_name_flag = 2;}
-	| type_specifier {typedef_name_flag = 2;}
+	: type_specifier specifier_qualifier_list
+	| type_specifier
 	| type_qualifier specifier_qualifier_list
 	| type_qualifier
 	;
@@ -533,7 +533,7 @@ external_declaration
 	;
 
 function_definition
-	: declaration_specifiers declarator declaration_list compound_statement
+	: declaration_specifiers declarator declaration_list compound_statement  
 	| declaration_specifiers declarator compound_statement
 	;
 
