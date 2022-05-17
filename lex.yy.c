@@ -763,15 +763,32 @@ char *yytext;
 #line 21 "scanner.l"
     // #include "globals.h"
     #include "parserNuevecito.tab.h"
+    #define YY_USER_ACTION \
+        yylloc.first_line = yylloc.last_line = yylineno; \
+        yylloc.first_column = yylloc.last_column; \
+        for(int i = 0; yytext[i] != '\0'; i++) { \
+            if(yytext[i] == '\n') { \
+                yylloc.last_line++; \
+                yylloc.last_column = 0; \
+            } \
+            else { \
+                yylloc.last_column++; \
+            }\
+        }
     #include <string.h>
     #include "globals.h"
     static int next_column = 1;
     int column = 1;
     char* line = NULL;
-    #define COLUMN_NUMBER column = next_column; next_column += strlen(yytext)
     int check_type(void);
     size_t line_alloc = 0;
     ssize_t line_sent, line_len = 0;
+
+    // if (!available) { 
+    //     free(line); 
+    //     line = NULL; 
+    //     line_alloc = line_sent = line_len = 0; 
+    // } 
 
     #define YY_INPUT(buf, result, max_size) \
         ssize_t available = line_len - line_sent; \
@@ -787,13 +804,11 @@ char *yytext;
         memcpy(buf, line + line_sent, available); \
         line_sent += available; \
         if (!available) { \
-            free(line); \
-            line = NULL; \
             line_alloc = line_sent = line_len = 0; \
         } \
         result = available;
-#line 796 "lex.yy.c"
-#line 797 "lex.yy.c"
+#line 811 "lex.yy.c"
+#line 812 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -1010,9 +1025,9 @@ YY_DECL
 		}
 
 	{
-#line 54 "scanner.l"
+#line 69 "scanner.l"
 
-#line 1016 "lex.yy.c"
+#line 1031 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1081,541 +1096,541 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 55 "scanner.l"
-{ COLUMN_NUMBER; return(AUTO); }
+#line 70 "scanner.l"
+{ return(AUTO); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 56 "scanner.l"
-{ COLUMN_NUMBER; return(BREAK); }
+#line 71 "scanner.l"
+{ return(BREAK); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 57 "scanner.l"
-{ COLUMN_NUMBER; return(CASE); }
+#line 72 "scanner.l"
+{ return(CASE); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 58 "scanner.l"
-{ COLUMN_NUMBER; return(CHAR); }
+#line 73 "scanner.l"
+{ return(CHAR); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 59 "scanner.l"
-{ COLUMN_NUMBER; return(CONST); }
+#line 74 "scanner.l"
+{ return(CONST); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 60 "scanner.l"
-{ COLUMN_NUMBER; return(CONTINUE); }
+#line 75 "scanner.l"
+{ return(CONTINUE); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 61 "scanner.l"
-{ COLUMN_NUMBER; return(DEFAULT); }
+#line 76 "scanner.l"
+{ return(DEFAULT); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 62 "scanner.l"
-{ COLUMN_NUMBER; return(DO); }
+#line 77 "scanner.l"
+{ return(DO); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 63 "scanner.l"
-{ COLUMN_NUMBER; return(DOUBLE); }
+#line 78 "scanner.l"
+{ return(DOUBLE); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 64 "scanner.l"
-{ COLUMN_NUMBER; return(ELSE); }
+#line 79 "scanner.l"
+{ return(ELSE); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 65 "scanner.l"
-{ COLUMN_NUMBER; return(ENUM); }
+#line 80 "scanner.l"
+{ return(ENUM); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 66 "scanner.l"
-{ COLUMN_NUMBER; return(EXTERN); }
+#line 81 "scanner.l"
+{ return(EXTERN); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 67 "scanner.l"
-{ COLUMN_NUMBER; return(FLOAT); }
+#line 82 "scanner.l"
+{ return(FLOAT); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 68 "scanner.l"
-{ COLUMN_NUMBER; return(FOR); }
+#line 83 "scanner.l"
+{ return(FOR); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 69 "scanner.l"
-{ COLUMN_NUMBER; return(GOTO); }
+#line 84 "scanner.l"
+{ return(GOTO); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 70 "scanner.l"
-{ COLUMN_NUMBER; return(IF); }
+#line 85 "scanner.l"
+{ return(IF); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 71 "scanner.l"
-{ COLUMN_NUMBER; return(INLINE); }
+#line 86 "scanner.l"
+{ return(INLINE); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 72 "scanner.l"
-{ COLUMN_NUMBER; return(INT); }
+#line 87 "scanner.l"
+{ return(INT); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 73 "scanner.l"
-{ COLUMN_NUMBER; return(LONG); }
+#line 88 "scanner.l"
+{ return(LONG); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 74 "scanner.l"
-{ COLUMN_NUMBER; return(REGISTER); }
+#line 89 "scanner.l"
+{ return(REGISTER); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 75 "scanner.l"
-{ COLUMN_NUMBER; return(RESTRICT); }
+#line 90 "scanner.l"
+{ return(RESTRICT); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 76 "scanner.l"
-{ COLUMN_NUMBER; return(RETURN); }
+#line 91 "scanner.l"
+{ return(RETURN); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 77 "scanner.l"
-{ COLUMN_NUMBER; return(SHORT); }
+#line 92 "scanner.l"
+{ return(SHORT); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 78 "scanner.l"
-{ COLUMN_NUMBER; return(SIGNED); }
+#line 93 "scanner.l"
+{ return(SIGNED); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 79 "scanner.l"
-{ COLUMN_NUMBER; return(SIZEOF); }
+#line 94 "scanner.l"
+{ return(SIZEOF); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 80 "scanner.l"
-{ COLUMN_NUMBER; return(STATIC); }
+#line 95 "scanner.l"
+{ return(STATIC); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 81 "scanner.l"
-{ COLUMN_NUMBER; return(STRUCT); }
+#line 96 "scanner.l"
+{ return(STRUCT); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 82 "scanner.l"
-{ COLUMN_NUMBER; return(SWITCH); }
+#line 97 "scanner.l"
+{ return(SWITCH); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 83 "scanner.l"
-{ COLUMN_NUMBER; return(TYPEDEF); }
+#line 98 "scanner.l"
+{ return(TYPEDEF); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 84 "scanner.l"
-{ COLUMN_NUMBER; return(UNION); }
+#line 99 "scanner.l"
+{ return(UNION); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 85 "scanner.l"
-{ COLUMN_NUMBER; return(UNSIGNED); }
+#line 100 "scanner.l"
+{ return(UNSIGNED); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 86 "scanner.l"
-{ COLUMN_NUMBER; return(VOID); }
+#line 101 "scanner.l"
+{ return(VOID); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 87 "scanner.l"
-{ COLUMN_NUMBER; return(VOLATILE); }
+#line 102 "scanner.l"
+{ return(VOLATILE); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 88 "scanner.l"
-{ COLUMN_NUMBER; return(WHILE); }
+#line 103 "scanner.l"
+{ return(WHILE); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 89 "scanner.l"
-{ COLUMN_NUMBER; return _ALIGNAS; }
+#line 104 "scanner.l"
+{ return _ALIGNAS; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 90 "scanner.l"
-{ COLUMN_NUMBER; return _ALIGNOF; }
+#line 105 "scanner.l"
+{ return _ALIGNOF; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 91 "scanner.l"
-{ COLUMN_NUMBER; return _ATOMIC; }
+#line 106 "scanner.l"
+{ return _ATOMIC; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 92 "scanner.l"
-{ COLUMN_NUMBER; return _BOOL; }
+#line 107 "scanner.l"
+{ return _BOOL; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 93 "scanner.l"
-{ COLUMN_NUMBER; return _COMPLEX; }
+#line 108 "scanner.l"
+{ return _COMPLEX; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 94 "scanner.l"
-{ COLUMN_NUMBER; return _GENERIC; }
+#line 109 "scanner.l"
+{ return _GENERIC; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 95 "scanner.l"
-{ COLUMN_NUMBER; return _IMAGINARY; }
+#line 110 "scanner.l"
+{ return _IMAGINARY; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 96 "scanner.l"
-{ COLUMN_NUMBER; return _NORETURN; }
+#line 111 "scanner.l"
+{ return _NORETURN; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 97 "scanner.l"
-{ COLUMN_NUMBER; return _STATIC_ASSERT; }
+#line 112 "scanner.l"
+{ return _STATIC_ASSERT; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 98 "scanner.l"
-{ COLUMN_NUMBER; return _THREAD_LOCAL; }
+#line 113 "scanner.l"
+{ return _THREAD_LOCAL; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 99 "scanner.l"
-{ COLUMN_NUMBER; return FUNC_NAME; }
+#line 114 "scanner.l"
+{ return FUNC_NAME; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 101 "scanner.l"
-{ COLUMN_NUMBER; return check_type(); }
+#line 116 "scanner.l"
+{ return check_type(); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 103 "scanner.l"
-{ COLUMN_NUMBER; return INTEGER_CONSTANT; }
+#line 118 "scanner.l"
+{ return INTEGER_CONSTANT; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 104 "scanner.l"
-{ COLUMN_NUMBER; return INTEGER_CONSTANT; }
+#line 119 "scanner.l"
+{ return INTEGER_CONSTANT; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 105 "scanner.l"
-{ COLUMN_NUMBER; return INTEGER_CONSTANT; }
+#line 120 "scanner.l"
+{ return INTEGER_CONSTANT; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 106 "scanner.l"
-{ COLUMN_NUMBER; return INTEGER_CONSTANT; }
+#line 121 "scanner.l"
+{ return INTEGER_CONSTANT; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 108 "scanner.l"
-{ COLUMN_NUMBER; return FLOATING_CONSTANT; }
+#line 123 "scanner.l"
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 109 "scanner.l"
-{ COLUMN_NUMBER; return FLOATING_CONSTANT; }
+#line 124 "scanner.l"
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 110 "scanner.l"
-{ COLUMN_NUMBER; return FLOATING_CONSTANT; }
+#line 125 "scanner.l"
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 111 "scanner.l"
-{ COLUMN_NUMBER; return FLOATING_CONSTANT; }
+#line 126 "scanner.l"
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 112 "scanner.l"
-{ COLUMN_NUMBER; return FLOATING_CONSTANT; }
+#line 127 "scanner.l"
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 113 "scanner.l"
-{ COLUMN_NUMBER; return FLOATING_CONSTANT; }
+#line 128 "scanner.l"
+{ return FLOATING_CONSTANT; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 115 "scanner.l"
-{COLUMN_NUMBER; return STRING_LITERAL; }
+#line 130 "scanner.l"
+{ return STRING_LITERAL; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 117 "scanner.l"
-{ COLUMN_NUMBER; return ELLIPSIS; }
+#line 132 "scanner.l"
+{ return ELLIPSIS; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 118 "scanner.l"
-{ COLUMN_NUMBER; return RIGHT_ASSIGN; }
+#line 133 "scanner.l"
+{ return RIGHT_ASSIGN; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 119 "scanner.l"
-{ COLUMN_NUMBER; return LEFT_ASSIGN; }
+#line 134 "scanner.l"
+{ return LEFT_ASSIGN; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 120 "scanner.l"
-{ COLUMN_NUMBER; return ADD_ASSIGN; }
+#line 135 "scanner.l"
+{ return ADD_ASSIGN; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 121 "scanner.l"
-{ COLUMN_NUMBER; return SUB_ASSIGN; }
+#line 136 "scanner.l"
+{ return SUB_ASSIGN; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 122 "scanner.l"
-{ COLUMN_NUMBER; return MUL_ASSIGN; }
+#line 137 "scanner.l"
+{ return MUL_ASSIGN; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 123 "scanner.l"
-{ COLUMN_NUMBER; return DIV_ASSIGN; }
+#line 138 "scanner.l"
+{ return DIV_ASSIGN; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 124 "scanner.l"
-{ COLUMN_NUMBER; return MOD_ASSIGN; }
+#line 139 "scanner.l"
+{ return MOD_ASSIGN; }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 125 "scanner.l"
-{ COLUMN_NUMBER; return AND_ASSIGN; }
+#line 140 "scanner.l"
+{ return AND_ASSIGN; }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 126 "scanner.l"
-{ COLUMN_NUMBER; return XOR_ASSIGN; }
+#line 141 "scanner.l"
+{ return XOR_ASSIGN; }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 127 "scanner.l"
-{ COLUMN_NUMBER; return OR_ASSIGN; }
+#line 142 "scanner.l"
+{ return OR_ASSIGN; }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 128 "scanner.l"
-{ COLUMN_NUMBER; return RIGHT_OP; }
+#line 143 "scanner.l"
+{ return RIGHT_OP; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 129 "scanner.l"
-{ COLUMN_NUMBER; return LEFT_OP; }
+#line 144 "scanner.l"
+{ return LEFT_OP; }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 130 "scanner.l"
-{ COLUMN_NUMBER; return INC_OP; }
+#line 145 "scanner.l"
+{ return INC_OP; }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 131 "scanner.l"
-{ COLUMN_NUMBER; return DEC_OP; }
+#line 146 "scanner.l"
+{ return DEC_OP; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 132 "scanner.l"
-{ COLUMN_NUMBER; return PTR_OP; }
+#line 147 "scanner.l"
+{ return PTR_OP; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 133 "scanner.l"
-{ COLUMN_NUMBER; return AND_OP; }
+#line 148 "scanner.l"
+{ return AND_OP; }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 134 "scanner.l"
-{ COLUMN_NUMBER; return OR_OP; }
+#line 149 "scanner.l"
+{ return OR_OP; }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 135 "scanner.l"
-{ COLUMN_NUMBER; return LE_OP; }
+#line 150 "scanner.l"
+{ return LE_OP; }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 136 "scanner.l"
-{ COLUMN_NUMBER; return GE_OP; }
+#line 151 "scanner.l"
+{ return GE_OP; }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 137 "scanner.l"
-{ COLUMN_NUMBER; return EQ_OP; }
+#line 152 "scanner.l"
+{ return EQ_OP; }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 138 "scanner.l"
-{ COLUMN_NUMBER; return NE_OP; }
+#line 153 "scanner.l"
+{ return NE_OP; }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 139 "scanner.l"
-{ COLUMN_NUMBER; return ';'; }
+#line 154 "scanner.l"
+{ return ';'; }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 140 "scanner.l"
-{ COLUMN_NUMBER; return '{'; }
+#line 155 "scanner.l"
+{ return '{'; }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 141 "scanner.l"
-{ COLUMN_NUMBER; return '}'; }
+#line 156 "scanner.l"
+{ return '}'; }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 142 "scanner.l"
-{ COLUMN_NUMBER; return ','; }
+#line 157 "scanner.l"
+{ return ','; }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 143 "scanner.l"
-{ COLUMN_NUMBER; return ':'; }
+#line 158 "scanner.l"
+{ return ':'; }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 144 "scanner.l"
-{ COLUMN_NUMBER; return '='; }
+#line 159 "scanner.l"
+{ return '='; }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 145 "scanner.l"
-{ COLUMN_NUMBER; return '('; }
+#line 160 "scanner.l"
+{ return '('; }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 146 "scanner.l"
-{ COLUMN_NUMBER; return ')'; }
+#line 161 "scanner.l"
+{ return ')'; }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 147 "scanner.l"
-{ COLUMN_NUMBER; return '['; }
+#line 162 "scanner.l"
+{ return '['; }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 148 "scanner.l"
-{ COLUMN_NUMBER; return ']'; }
+#line 163 "scanner.l"
+{ return ']'; }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 149 "scanner.l"
-{ COLUMN_NUMBER; return '.'; }
+#line 164 "scanner.l"
+{ return '.'; }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 150 "scanner.l"
-{ COLUMN_NUMBER; return '&'; }
+#line 165 "scanner.l"
+{ return '&'; }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 151 "scanner.l"
-{ COLUMN_NUMBER; return '!'; }
+#line 166 "scanner.l"
+{ return '!'; }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 152 "scanner.l"
-{ COLUMN_NUMBER; return '~'; }
+#line 167 "scanner.l"
+{ return '~'; }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 153 "scanner.l"
-{ COLUMN_NUMBER; return '-'; }
+#line 168 "scanner.l"
+{ return '-'; }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 154 "scanner.l"
-{ COLUMN_NUMBER; return '+'; }
+#line 169 "scanner.l"
+{ return '+'; }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 155 "scanner.l"
-{ COLUMN_NUMBER; return '*'; }
+#line 170 "scanner.l"
+{ return '*'; }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 156 "scanner.l"
-{ COLUMN_NUMBER; return '/'; }
+#line 171 "scanner.l"
+{ return '/'; }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 157 "scanner.l"
-{ COLUMN_NUMBER; return '%'; }
+#line 172 "scanner.l"
+{ return '%'; }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 158 "scanner.l"
-{ COLUMN_NUMBER; return '<'; }
+#line 173 "scanner.l"
+{ return '<'; }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 159 "scanner.l"
-{ COLUMN_NUMBER; return '>'; }
+#line 174 "scanner.l"
+{ return '>'; }
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 160 "scanner.l"
-{ COLUMN_NUMBER; return '^'; }
+#line 175 "scanner.l"
+{ return '^'; }
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 161 "scanner.l"
-{ COLUMN_NUMBER; return '|'; }
+#line 176 "scanner.l"
+{ return '|'; }
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 162 "scanner.l"
-{ COLUMN_NUMBER; return '?'; }
+#line 177 "scanner.l"
+{ return '?'; }
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 164 "scanner.l"
-{ COLUMN_NUMBER; }
+#line 179 "scanner.l"
+{ }
 	YY_BREAK
 case 105:
 /* rule 105 can match eol */
 YY_RULE_SETUP
-#line 165 "scanner.l"
+#line 180 "scanner.l"
 { next_column = 1; }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 166 "scanner.l"
+#line 181 "scanner.l"
 { }
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 168 "scanner.l"
+#line 183 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1619 "lex.yy.c"
+#line 1634 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2632,7 +2647,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 168 "scanner.l"
+#line 183 "scanner.l"
 
 
 int yywrap(void) {
@@ -2697,13 +2712,14 @@ int check_type(void) {
         new_symbol.lexeme = malloc(sizeof(char) * (strlen(yytext) + 1));
         strcpy(new_symbol.lexeme, yytext);
         add_symbol_to_symbolTable(new_symbol);
-        typedef_name_flag = 0;
-        // show_symbol_table();
+        typedef_name_flag = 2;
+        show_symbol_table();
         return TYPEDEF_NAME;
     } 
     else if (typedef_name_flag == 2) {
-        typedef_name_flag = 0;
-        if (get_symbol_type(yytext) != -1) {
+        typedef_name_flag = 2;
+        // printf("------------------ %d. CURRENT YYTEXT: %s\n", yylineno, yytext);
+        if (get_symbol_idx(yytext) != -1) {
             return TYPEDEF_NAME; 
         } else {
             return IDENTIFIER;
