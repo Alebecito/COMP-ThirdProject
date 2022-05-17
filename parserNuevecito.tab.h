@@ -156,7 +156,6 @@ struct YYLTYPE
 extern YYSTYPE yylval;
 extern YYLTYPE yylloc;
 
-
 int yyparse (void);
 
 
