@@ -1,4 +1,4 @@
-voi copyt(nt n) {
-    for (int i = 0; i < 100; i) {
-    }
+voi copyt(int n) {
+    int a = 5 . 5;
+    nt b = 5 + 5;
 }
