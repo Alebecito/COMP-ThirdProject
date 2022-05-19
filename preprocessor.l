@@ -6,7 +6,31 @@
 
 %{
     #include "preprocessor.h"
-    // int count = 0;
+
+
+    static int pp_next_column = 1;
+    int pp_column = 1;
+    char* pp_line = NULL;
+    size_t pp_line_alloc = 0;
+    ssize_t pp_line_sent, pp_line_len = 0;
+
+        #define YY_INPUT(buf, result, max_size) \
+        ssize_t available = pp_line_len - pp_line_sent; \
+        if (!available) { \
+            pp_line_sent = 0; \
+            available = getline(&pp_line, &pp_line_alloc, yyin); \
+            if (available < 0) { \
+                available = 0; \
+            } \
+            pp_line_len = available; \
+        } \
+        if (available > max_size) available = max_size; \
+        memcpy(buf, pp_line + pp_line_sent, available); \
+        pp_line_sent += available; \
+        if (!available) { \
+            pp_line_alloc = pp_line_sent = pp_line_len = 0; \
+        } \
+        result = available;
 %}
 
 

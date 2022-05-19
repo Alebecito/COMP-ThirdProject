@@ -62,7 +62,10 @@ int main(int argc, char *argv[]) {
     }
 
     if (optind >= argc) {
-        fprintf(stderr, "no input files\n");
+        fprintf(stderr, "Please provide a file-name\n\n");
+        fprintf(stderr, 
+                usageInfo,
+                argv[0]);
         exit(EXIT_FAILURE);
     }
     strcpy(fileName, argv[optind]);

@@ -750,8 +750,32 @@ char *yytext;
 /* Definition Section has one variable which can be accessed inside yylex() and main() */
 #line 8 "preprocessor.l"
     #include "preprocessor.h"
-    // int count = 0;
-#line 755 "preprocessor.yy.c"
+
+
+    static int pp_next_column = 1;
+    int pp_column = 1;
+    char* pp_line = NULL;
+    size_t pp_line_alloc = 0;
+    ssize_t pp_line_sent, pp_line_len = 0;
+
+        #define YY_INPUT(buf, result, max_size) \
+        ssize_t available = pp_line_len - pp_line_sent; \
+        if (!available) { \
+            pp_line_sent = 0; \
+            available = getline(&pp_line, &pp_line_alloc, yyin); \
+            if (available < 0) { \
+                available = 0; \
+            } \
+            pp_line_len = available; \
+        } \
+        if (available > max_size) available = max_size; \
+        memcpy(buf, pp_line + pp_line_sent, available); \
+        pp_line_sent += available; \
+        if (!available) { \
+            pp_line_alloc = pp_line_sent = pp_line_len = 0; \
+        } \
+        result = available;
+#line 779 "preprocessor.yy.c"
 /* Identifiers */
 /*integer-constant-octal 0|([0-7]+()*/
 /*Universal character names*/
@@ -765,7 +789,7 @@ char *yytext;
 /* matches with capital letters, second rule*/
 /* matches with any character except newline and */
 /* third rule does not take input after the enter*/
-#line 769 "preprocessor.yy.c"
+#line 793 "preprocessor.yy.c"
 
 #define INITIAL 0
 #define IN_COMMENT 1
@@ -986,11 +1010,11 @@ YY_DECL
 		}
 
 	{
-#line 47 "preprocessor.l"
+#line 71 "preprocessor.l"
 
 
 
-#line 994 "preprocessor.yy.c"
+#line 1018 "preprocessor.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1060,62 +1084,62 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 50 "preprocessor.l"
+#line 74 "preprocessor.l"
 {return HEADER_NAME;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 52 "preprocessor.l"
+#line 76 "preprocessor.l"
 {return IDENTIFIER;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 54 "preprocessor.l"
+#line 78 "preprocessor.l"
 {return PREPROCESSOR_START;}
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 56 "preprocessor.l"
+#line 80 "preprocessor.l"
 {}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 58 "preprocessor.l"
+#line 82 "preprocessor.l"
 {}
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 60 "preprocessor.l"
+#line 84 "preprocessor.l"
 {return NEW_LINE;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 62 "preprocessor.l"
+#line 86 "preprocessor.l"
 {return WHITESPACE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 66 "preprocessor.l"
+#line 90 "preprocessor.l"
 {}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 70 "preprocessor.l"
+#line 94 "preprocessor.l"
 {return PP_CODE;};
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(IN_COMMENT):
-#line 72 "preprocessor.l"
+#line 96 "preprocessor.l"
 return END_OF_FILE;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 74 "preprocessor.l"
+#line 98 "preprocessor.l"
 ECHO;
 	YY_BREAK
-#line 1119 "preprocessor.yy.c"
+#line 1143 "preprocessor.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2132,7 +2156,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 74 "preprocessor.l"
+#line 98 "preprocessor.l"
 
   
 /*** Code Section prints the number of

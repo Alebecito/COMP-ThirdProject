@@ -8,6 +8,7 @@ extern int yylineno; // borrar
 extern int column; // borrar
 extern FILE* yyin;
 extern int yyleng;
+extern char* yytext;
 void eat_to_newline();
 void eat_to_whitespace();
 extern char* line;
@@ -142,17 +143,17 @@ multiplicative_expression
 	;
 
 additive_expression
-	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression
-	| additive_expression '-' multiplicative_expression
-	| error ';' //{yyerrok;}
+	: multiplicative_expression {printf("additive_expression1\n");}
+	| additive_expression '+' multiplicative_expression {printf("additive_expression1\n");}
+	| additive_expression '-' multiplicative_expression {printf("additive_expression1\n");}
+	| error ';' {yyerrok; printf("current: %s\n", yytext);}
   	//| error '-' multiplicative_expression
 	;
 
 shift_expression
-	: additive_expression
-	| shift_expression LEFT_OP additive_expression
-	| shift_expression RIGHT_OP additive_expression
+	: additive_expression {printf("shift_expression1\n");}
+	| shift_expression LEFT_OP additive_expression {printf("shift_expression2\n");}
+	| shift_expression RIGHT_OP additive_expression {printf("shift_expression3\n");}
 	;
 
 relational_expression
@@ -401,7 +402,7 @@ direct_declarator
 	| direct_declarator '(' identifier_list ')'
 	//| direct_declarator '(' error ')' 
   	//| error '(' error ')' 
-  	| '(' error ')'
+  	| '(' error ')' 
 	//| error error ')' {yyerrok;}
 	;
 
@@ -531,8 +532,8 @@ labeled_statement
 
 compound_statement
 	: '{' '}'
-	| '{'  block_item_list '}'
-	//| '{' error '}' 
+	| '{' block_item_list '}'
+	| '{' error '}'
 	;
 
 block_item_list
@@ -568,7 +569,7 @@ iteration_statement
 	| FOR '(' declaration expression_statement ')' statement
 	| FOR '(' declaration expression_statement expression ')' statement
 	//| DO error WHILE '(' expression ')' ';' 
-  	//| FOR '(' error')' statement 
+  	//| FOR '(' error ')' statement 
 	;
 
 jump_statement
@@ -581,8 +582,10 @@ jump_statement
 	;
 
 translation_unit
-	: external_declaration
-	| translation_unit external_declaration
+	: external_declaration {printf("BOLUDO1\n");}
+	| translation_unit external_declaration {printf("BOLUDO2\n");}
+	| error ')' translation_unit external_declaration {yyclearin; printf("BOLUDO3\n");}
+
 	;
 
 external_declaration
@@ -591,10 +594,10 @@ external_declaration
 	;
 
 function_definition
-	: declaration_specifiers declarator declaration_list compound_statement  
+	: declaration_specifiers declarator declaration_list compound_statement {printf("**********FIRST\n");}
 	| declaration_specifiers declarator compound_statement
 	//| declaration_specifiers error compound_statement
-	| error declaration_list compound_statement
+	| error declarator declaration_list compound_statement {printf("**********MOTHERFUCKING ERROR\n");}
   	//| declarator error compound_statement
   	//| error compound_statement
 	//| error declarator declaration_list compound_statement // {printf("errorFunction_definition2\n");}
