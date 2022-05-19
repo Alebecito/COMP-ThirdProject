@@ -56,4 +56,5 @@ void preprocessor();
 
 char *string_append(char *s1, char *s2);
 
+char *current_filename;
 #endif

@@ -143,17 +143,17 @@ multiplicative_expression
 	;
 
 additive_expression
-	: multiplicative_expression {printf("additive_expression1\n");}
-	| additive_expression '+' multiplicative_expression {printf("additive_expression1\n");}
-	| additive_expression '-' multiplicative_expression {printf("additive_expression1\n");}
-	| error ';' {yyerrok; printf("current: %s\n", yytext);}
+	: multiplicative_expression
+	| additive_expression '+' multiplicative_expression
+	| additive_expression '-' multiplicative_expression
+	| error multiplicative_expression {yyerrok;}
   	//| error '-' multiplicative_expression
 	;
 
 shift_expression
-	: additive_expression {printf("shift_expression1\n");}
-	| shift_expression LEFT_OP additive_expression {printf("shift_expression2\n");}
-	| shift_expression RIGHT_OP additive_expression {printf("shift_expression3\n");}
+	: additive_expression
+	| shift_expression LEFT_OP additive_expression
+	| shift_expression RIGHT_OP additive_expression
 	;
 
 relational_expression
@@ -582,10 +582,8 @@ jump_statement
 	;
 
 translation_unit
-	: external_declaration {printf("BOLUDO1\n");}
-	| translation_unit external_declaration {printf("BOLUDO2\n");}
-	| error ')' translation_unit external_declaration {yyclearin; printf("BOLUDO3\n");}
-
+	: external_declaration
+	| translation_unit external_declaration
 	;
 
 external_declaration
@@ -594,10 +592,10 @@ external_declaration
 	;
 
 function_definition
-	: declaration_specifiers declarator declaration_list compound_statement {printf("**********FIRST\n");}
+	: declaration_specifiers declarator declaration_list compound_statement
 	| declaration_specifiers declarator compound_statement
 	//| declaration_specifiers error compound_statement
-	| error declarator declaration_list compound_statement {printf("**********MOTHERFUCKING ERROR\n");}
+	| error declaration_list compound_statement
   	//| declarator error compound_statement
   	//| error compound_statement
 	//| error declarator declaration_list compound_statement // {printf("errorFunction_definition2\n");}
@@ -689,12 +687,7 @@ static void location_print (FILE *out, YYLTYPE const * const loc) {
 static const char * error_format_string (int argc, const yypcontext_t *yyctx) {
 	switch (argc) {
 		default:
-		case 0:
-			if (yysymbol_name (yypcontext_token (yyctx)) == "IDENTIFIER") {
-				return ("%@: \033[1;31msyntax error\033[0m: unexpected %u. Invalid keyword.");
-			} else {
-				return ("%@: \033[1;31msyntax error\033[0m: unexpected %u");
-			}
+		case 0: return ("%@: \033[1;31msyntax error\033[0m: unexpected %u");
 		case 1: return ("%@: \033[1;31msyntax error\033[0m: unexpected %u");
 		case 2: return ("%@: \033[1;31msyntax error\033[0m: expected %0e before %u");
 		case 3: return ("%@: \033[1;31msyntax error\033[0m: expected %0e or %1e before %u");
@@ -745,7 +738,7 @@ int yyreport_syntax_error (const yypcontext_t *yyctx) {
 
     printf ("\033[1;33m%5d\033[0m | %s\n", loc->first_line, line);
 
-	if (loc->first_column != 1) {
+	if (loc->first_column != 1 || yyleng == 1) {
 		printf ("%5s | \033[1;31m%*s\033[0m", "", loc->first_column + 1, "^"); // cambio	
 	} else {
 		printf ("%5s | \033[1;31m%*s\033[0m", "", loc->first_column, "^"); // cambio

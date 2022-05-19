@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <math.h>
 #include "preprocessor.h"
 #include "globals.h"
 #include <time.h>
@@ -33,64 +33,78 @@ void resetColor() {
 	printf("\033[0m");
 }
 
-int get_error_line_file(const char *str, int pp_column) {
-    printf("PP_COLUMN: %d\n", pp_column);
+int get_error_line_file(const char *str, char* file_name) {
+    // printf("STR: %s\n", str);
+    // printf("FILE_NAME: %s\n", file_name);
+    char *result = strstr(pp_line, file_name) + 1;
+    int position = result - pp_line;
+    pp_column = position;
+    // printf("PP_COLUMN: %d\n", pp_column);
 	yellow();
-    printf("prueba.c:%d:%d: ", ppf_lineno, pp_column);
+    printf("%s:%d:%d: ", current_filename, ppf_lineno, pp_column);
 	red();
 	printf("error: ");
-	resetColor();
+	// resetColor();
 	printf("%s\n", str);
-	char *newLine = NULL;
+	// char *newLine = NULL;
 
-	if (!strstr(pp_line, "\n")) {
-		newLine = malloc(strlen(pp_line) + 2);
-		strcpy(newLine, pp_line);
-		strcat(newLine, "\n");
-	} else {
-		newLine = malloc(strlen(pp_line) + 1);
-		strcpy(newLine, pp_line);
-	}
-	printf("%s", newLine);
+	// if (!strstr(pp_line, "\n")) {
+	// 	newLine = malloc(strlen(pp_line) + 2);
+	// 	strcpy(newLine, pp_line);
+	// 	strcat(newLine, "\n");
+	// } else {
+	// 	newLine = malloc(strlen(pp_line) + 1);
+	// 	strcpy(newLine, pp_line);
+	// }
+	// printf("%s", newLine);
+        printf ("\033[1;33m%5d\033[0m | %s", ppf_lineno, pp_line);
     // printf("POSITION: %d", position);
-	for(int i = 0; i < pp_column - 2; i++)
+    char* column_str = malloc(sizeof(char) * 30);
+    sprintf(column_str, "%d", pp_column);
+    int offset = 5 + strlen(column_str);
+    printf("%d", offset);
+	for(int i = 0; i < pp_column + offset - 2; i++)
 		printf(" ");
 	// red();
     printf("\033[1;31m^");
-    for (int i = pp_column ; i < pp_column + pp_column - 1 ;i++) {
+    for (int i = pp_column + offset ; i < pp_column + offset + strlen(file_name) ;i++) {
 		printf("\033[1;31m~");
     }
     printf("\n");
     resetColor();
 	// resetColor();
+    
+    remove(first_tempfile_name);
+    remove(new_file_name);
+    exit(-1);
 }
-
-int get_error_line(const char *str) {
-	yellow();
-    printf("prueba.c:%d:%d: ", ppf_lineno, pp_column);
-	red();
-	printf("error: ");
-	resetColor();
-	printf("%s\n", str);
-	char *newLine = NULL;
-
-	if (!strstr(pp_line, "\n")) {
-		newLine = malloc(strlen(pp_line) + 2);
-		strcpy(newLine, pp_line);
-		strcat(newLine, "\n");
-	} else {
-		newLine = malloc(strlen(pp_line) + 1);
-		strcpy(newLine, pp_line);
-	}
-	printf("%s", newLine);
+/*
     char *result = strstr(pp_line, ppf_text);
     int position = result - pp_line;
     pp_column = position;
-	for(int i = 0; i < pp_column - 1; i++)
+*/
+int get_error_line(const char *str) {
+    char *result = strstr(pp_line, ppf_text);
+    int position = result - pp_line;
+    pp_column = position;
+    yellow();
+    printf("%s:%d:%d: ", current_filename, ppf_lineno, pp_column);
+	red();
+	printf("error: ");
+	printf("%s\n", str);
+        printf ("\033[1;33m%5d\033[0m | %s", ppf_lineno, pp_line);
+    // printf("POSITION: %d", position);
+    char* column_str = malloc(sizeof(char) * 30);
+    sprintf(column_str, "%d", pp_column);
+    int offset = 7 + strlen(column_str);
+	for(int i = 0; i < pp_column + offset - 2; i++)
 		printf(" ");
 	// red();
     printf("\033[1;31m^");
-    for (int i = pp_column ; i < pp_column + strlen(ppf_text) ;i++) {
+    
+    // printf("%d", offset);
+
+    for (int i = pp_column + offset ; i < pp_column + offset + strlen(ppf_text) ;i++) {
 		printf("\033[1;31m~");
     }
     printf("\n");
@@ -339,7 +353,8 @@ void print_error_type_noexit(char* error_type, char* lexeme) {
 }
 
 void preprocess_file(char* filename, char* oldFilename, int depthFile, int isAngleBracketFilename) {
-    
+
+    current_filename = filename;
     int isValidDirective = 0;
 
     // printf("Nuevo LLAMADO\n");
@@ -348,39 +363,55 @@ void preprocess_file(char* filename, char* oldFilename, int depthFile, int isAng
     if (!isAngleBracketFilename) {
         fp = get_quoteinclude_file(filename);
         if (fp == NULL) {
+            current_filename = oldFilename;
 
             char *error = malloc(1030);
             if (strcmp(oldFilename, "") == 0) {
                 sprintf(error, "No such file or directory: %s", filename);  
-                get_error_line_file(error, strlen(filename) + 2);
+                char* file_name_enclosed = malloc(strlen(filename) + 3);
+                sprintf(file_name_enclosed, "\"%s\"", filename);
+                get_error_line_file(error, file_name_enclosed);
 
-                new_error(filename);
-                print_error_type(error, "");
+                // new_error(filename);
+                // print_error_type(error, "");
             } else {
-                sprintf(error, "No such file or directory: %s", filename);  
-                get_error_line_file(error, strlen(filename) + 2);
-                new_error(oldFilename);
+                sprintf(error, "No such file or directory: %s", filename); 
 
-                print_error_type(error, "");
+                char* file_name_enclosed = malloc(strlen(filename) + 3);
+ 
+                sprintf(file_name_enclosed, "\"%s\"", filename);
+                get_error_line_file(error, file_name_enclosed);
+                // new_error(oldFilename);
+
+                // print_error_type(error, "");
             }
         };
     } else {
         fp = get_angleinclude_file(filename);
         if (fp == NULL) {
+            current_filename = oldFilename;
             // printf("ARCHIVO NO EXISTE\n");
             char *error = malloc(1030);
             if (strcmp(oldFilename, "") == 0) {
                 sprintf(error, "No such file or directory: %s", filename);  
-                get_error_line_file(error, strlen(filename) + 2);
+                
+                char* file_name_enclosed = malloc(strlen(filename) + 3);
+                sprintf(file_name_enclosed, "<%s>", filename);
+                get_error_line_file(error, file_name_enclosed);
 
-                new_error(filename);
-                print_error_type(error, "");
+                // new_error(filename);
+                // print_error_type(error, "");
             } else {
                 sprintf(error, "No such file or directory: %s", filename);  
-                get_error_line_file(error, strlen(filename) + 2);
-                new_error(oldFilename);
+                char* file_name_enclosed = malloc(strlen(filename) + 3);                
 
-                print_error_type(error, "");
+                sprintf(file_name_enclosed, "<%s>", filename);
+
+                get_error_line_file(error, file_name_enclosed);
+
+                // new_error(oldFilename);
+
+                // print_error_type(error, "");
             }
         }
     }
@@ -400,7 +431,7 @@ void preprocess_file(char* filename, char* oldFilename, int depthFile, int isAng
                 current_token = get_preprocessing_token();
                 current_token = ignoreWhitespace(current_token);
                 if (current_token.type == HEADER_NAME) {
-                    printf("HEADER_NAME\n");
+                    // printf("HEADER_NAME\n");
                     // printf("DIRECTIVA: %s\n", current_token.lexeme);
                     char *include_filename = malloc(strlen(current_token.lexeme) * sizeof(char));
                     int startsWith_angle_bracket = 0;
@@ -415,7 +446,7 @@ void preprocess_file(char* filename, char* oldFilename, int depthFile, int isAng
                     // size_t strLength = );
                     strncpy(new_filename, include_filename + 1, strlen(include_filename) - 2);
                     new_filename[strlen(include_filename) - 2] = '\0';
-                    puts(new_filename);
+                    // puts(new_filename);
                     // printf("CURRENT depthFile: %d\n", depthFile);
 
                     current_token = ignoreWhitespace(current_token);
@@ -423,12 +454,13 @@ void preprocess_file(char* filename, char* oldFilename, int depthFile, int isAng
                     int has_finished = 0;
                     if (current_token.type == END_OF_FILE) {
                         // printf("`````````````````````` FINAL DE ARCHIVO ````````````````````````\n");
-                        // has_finished = 1;
+                        has_finished = 1;
                     }
                     else if (current_token.type != NEW_LINE) {
                         // printf("%d", current_token.type);
-                        new_error(filename);
-                        print_error_type("extra tokens at end of #include directive", "");
+                        // new_error(filename);
+                        // print_error_type("extra tokens at end of #include directive", "");
+                        get_error_line("extra tokens at end of #include directive");
                     }
                     isValidDirective = 1;
                     if (depthFile == 100) {
@@ -436,12 +468,14 @@ void preprocess_file(char* filename, char* oldFilename, int depthFile, int isAng
                         print_error_type("#include nested too deeply (max depth is 100)", "");
                     }
                     // printf("ES UN ANGLE BRACKER: %s. -> %c\n", new_filename, new_filename[0]);
+                    int temp = pp_column;
                     if (startsWith_angle_bracket) {
                         // printf("ANGLE BRACKER\n");
                         preprocess_file(new_filename, filename, depthFile + 1, 1);
                     } else {
                         preprocess_file(new_filename, filename, depthFile + 1, 0);
                     }
+                    pp_column = temp;
                     // printf("HELLO AGAIN\n");
                     // ppf_in = fp;
                     // flex_pop_buffer();
