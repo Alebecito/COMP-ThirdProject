@@ -1,10 +1,4 @@
-#include <stdlib.h>
-#define 5 53
-#define unvelized 5 + jopo
-
-typedef unsigned long ulong;
-
-int g_step;            
-const unsigned  mh=0xf0f0f0f; 
-printf(unvelized)
-#define -5 5 + jopo
+voi copyt(int n) {
+    int a = 5 . 5;
+    nt b = 5 + 5;
+}

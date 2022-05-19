@@ -1,4 +1,6 @@
 parserNuevecito.tab.h
 parserNuevecito.tab.c
+parserNuevecito.output
+prueba.c
 parserC
 lex.yy.c
