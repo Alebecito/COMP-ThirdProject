@@ -8,6 +8,7 @@ extern int yylineno; // borrar
 extern int column; // borrar
 extern FILE* yyin;
 extern int yyleng;
+extern char* yytext;
 void eat_to_newline();
 void eat_to_whitespace();
 extern char* line;
@@ -145,7 +146,7 @@ additive_expression
 	: multiplicative_expression
 	| additive_expression '+' multiplicative_expression
 	| additive_expression '-' multiplicative_expression
-	| error ';' //{yyerrok;}
+	| error ';' // {yyerrok;}
   	//| error '-' multiplicative_expression
 	;
 
@@ -401,7 +402,7 @@ direct_declarator
 	| direct_declarator '(' identifier_list ')'
 	//| direct_declarator '(' error ')' 
   	//| error '(' error ')' 
-  	| '(' error ')'
+  	| '(' error ')' 
 	//| error error ')' {yyerrok;}
 	;
 
@@ -531,8 +532,8 @@ labeled_statement
 
 compound_statement
 	: '{' '}'
-	| '{'  block_item_list '}'
-	//| '{' error '}' 
+	| '{' block_item_list '}'
+	| '{' error '}'
 	;
 
 block_item_list
@@ -568,7 +569,7 @@ iteration_statement
 	| FOR '(' declaration expression_statement ')' statement
 	| FOR '(' declaration expression_statement expression ')' statement
 	//| DO error WHILE '(' expression ')' ';' 
-  	//| FOR '(' error')' statement 
+  	//| FOR '(' error ')' statement 
 	;
 
 jump_statement
@@ -591,7 +592,7 @@ external_declaration
 	;
 
 function_definition
-	: declaration_specifiers declarator declaration_list compound_statement  
+	: declaration_specifiers declarator declaration_list compound_statement
 	| declaration_specifiers declarator compound_statement
 	//| declaration_specifiers error compound_statement
 	| error declaration_list compound_statement
