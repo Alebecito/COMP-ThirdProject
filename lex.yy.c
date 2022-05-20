@@ -1623,7 +1623,7 @@ YY_RULE_SETUP
 case 106:
 YY_RULE_SETUP
 #line 181 "scanner.l"
-{ printf("Lexical Error: Token %s not suppported", yytext); }
+{ }
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
