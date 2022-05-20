@@ -21,24 +21,15 @@ extern char* pp_line;
 
 char* first_tempfile_name;
 
-void red() {
-	printf("\033[1;31m");
-}
-
-void yellow() {
-	printf("\033[1;33m");
-}
-
-void resetColor() {
-	printf("\033[0m");
-}
 
 int get_error_line_file(const char *str, char* file_name) {
     // printf("STR: %s\n", str);
     // printf("FILE_NAME: %s\n", file_name);
+
     char *result = strstr(pp_line, file_name) + 1;
     int position = result - pp_line;
     pp_column = position;
+
     // printf("PP_COLUMN: %d\n", pp_column);
 	yellow();
     printf("%s:%d:%d: ", current_filename, ppf_lineno, pp_column);
@@ -286,7 +277,7 @@ int get_ppid_idx (char* name) {
     return -1;
 }
 
-void show_symbol_table() {
+void show_symbolpp_table() {
     printf("********** Symbol Table **********\n");
     printf("Length: %d \n", symbolPPTable.nullsym);
     for (int i = 0; i < symbolPPTable.nullsym; i++) {
@@ -360,12 +351,16 @@ void preprocess_file(char* filename, char* oldFilename, int depthFile, int isAng
     // printf("Nuevo LLAMADO\n");
     FILE *fp;
     // printf("n");
+
     if (!isAngleBracketFilename) {
+        
         fp = get_quoteinclude_file(filename);
+        
         if (fp == NULL) {
             current_filename = oldFilename;
 
             char *error = malloc(1030);
+
             if (strcmp(oldFilename, "") == 0) {
                 sprintf(error, "No such file or directory: %s", filename);  
                 char* file_name_enclosed = malloc(strlen(filename) + 3);
@@ -622,7 +617,7 @@ void preprocess_defines() {
 
     FILE *temporal_file = fopen(first_tempfile_name, "r");
     
-    new_file_name = malloc(40 * sizeof(char));
+    new_file_name = malloc(70 * sizeof(char));
     sprintf(new_file_name, "temporal_file%lld.c", (long long) time(NULL));
     new_file = fopen(new_file_name, "w");
     flex_create_buffer(temporal_file);

@@ -27,12 +27,6 @@ int main(int argc, char **argv)
     }
     // #endif
     typedef_name_flag = 2;
-    // printf("QUE LE PASE WEON2\n");
-    
-    FILE *source_file = fopen("prueba.c", "r");
-    // source_file = new_file;
-    yyin = source_file;
-    // que basura es esto de abajo
 
     yyparse();
     /* printf("yysymbol_kind_t: %d", yysymbol_kind_t); */

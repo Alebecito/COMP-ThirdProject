@@ -33,4 +33,9 @@ char *new_file_name;
 char *includePath;
 char *quotePath;
 
+char* original_filename;
+
+void red();
+void yellow();
+void resetColor();
 #endif

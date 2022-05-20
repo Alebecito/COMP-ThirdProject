@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu May 19 13:54:08 2022
+# Make data base, printed on Thu May 19 18:13:35 2022
 
 # Variables
 
@@ -163,9 +163,9 @@ MOTD_SHOWN = update-motd
 
 # Directories
 
-# . (device 68, inode 3377699721357786): 52 files, no impossibilities.
+# . (device 68, inode 3377699721357786): 34 files, no impossibilities.
 
-# 52 files, no impossibilities in 1 directories.
+# 34 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -175,6 +175,12 @@ MOTD_SHOWN = update-motd
 
 # Not a target:
 scanner.l:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+preprocessor.c:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -195,18 +201,25 @@ main.c:
 # Not a target:
 makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-05-16 00:17:22.9373676
+#  Last modified 2022-05-19 18:13:28.6205586
 #  File has been updated.
 #  Successfully updated.
 
-parserC: scanner.l parserNuevecito.y main.c
+parserC: scanner.l parserNuevecito.y main.c preprocessor.l parserMain.c preprocessor.c
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'makefile', line 3):
-	bison -d -t -v parserNuevecito.y
 	flex scanner.l
-	gcc -g parserNuevecito.tab.c lex.yy.c main.c -lfl -o parserC
+	bison -d -t -v parserNuevecito.y
+	flex preprocessor.l
+	gcc -g parserNuevecito.tab.c lex.yy.c preprocessor.c preprocessor.yy.c parserMain.c -lfl -o parserC
+
+# Not a target:
+parserMain.c:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
 
 # Not a target:
 .DEFAULT:
@@ -220,20 +233,26 @@ parserNuevecito.y:
 #  Modification time never checked.
 #  File has not been updated.
 
+# Not a target:
+preprocessor.l:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
 # files hash-table stats:
-# Load=8/1024=1%, Rehash=0, Collisions=0/21=0%
+# Load=11/1024=1%, Rehash=0, Collisions=0/27=0%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 57 / storage = 970 B / avg = 17 B
-# current buf: size = 8162 B / used = 970 B / count = 57 / avg = 17 B
+# strcache buffers: 1 (0) / strings = 39 / storage = 480 B / avg = 12 B
+# current buf: size = 8162 B / used = 480 B / count = 39 / avg = 12 B
 
-# strcache performance: lookups = 66 / hit rate = 13%
+# strcache performance: lookups = 51 / hit rate = 23%
 # hash-table stats:
-# Load=57/8192=1%, Rehash=0, Collisions=1/66=2%
-# Finished Make data base on Thu May 19 13:54:08 2022
+# Load=39/8192=0%, Rehash=0, Collisions=1/51=2%
+# Finished Make data base on Thu May 19 18:13:35 2022
 
  

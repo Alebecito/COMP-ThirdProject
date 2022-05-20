@@ -24,7 +24,17 @@ extern void preprocessor(char* input_filename);
 #include <string.h>
 #include "globals.h"
 
+extern int yylex();
+extern int yyerror();
+extern int yyparse();
+extern int yylineno;
+extern int column;
+extern FILE *yyin;
+extern char *lineptr;
+extern int yydebug;
+
 int main(int argc, char *argv[]) {
+    printf("ERROR");
     int flags, opt;
     int nsecs, tfnd;
 
@@ -69,12 +79,22 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     strcpy(fileName, argv[optind]);
+    original_filename = malloc(strlen(fileName) + 1);
+    printf("ERROR");
+    strcpy(original_filename, fileName);
     // printf("name argument = %s\n", fileName);
 
-    /* Other code omitted */
+    // /* Other code omitted */
 
     preprocessor(fileName);
 
+    FILE* source_file = fopen(new_file_name, "r");
+    yyin = source_file;
+
+    symbolTable.symbols = malloc(128 * sizeof(Symbol));
+    symbolTable.nullsym = 0;
+    symbolTable.size = 128;
+    yyparse();
 
     exit(EXIT_SUCCESS);
 }

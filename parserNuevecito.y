@@ -56,7 +56,7 @@ primary_expression
 	| constant
 	| string
 	| '(' expression ')'
-	//| '(' error ')'
+	| '(' error ')'
 	| _GENERIC_selection
 	;
 
@@ -105,7 +105,7 @@ postfix_expression
 argument_expression_list
 	: assignment_expression
 	| argument_expression_list ',' assignment_expression
-	//| error ',' assignment_expression
+	| error ','
 	;
 
 unary_expression
@@ -137,17 +137,13 @@ multiplicative_expression
 	| multiplicative_expression '*' cast_expression
 	| multiplicative_expression '/' cast_expression
 	| multiplicative_expression '%' cast_expression
-	//| error '*' cast_expression
-  	//| error '/' cast_expression
- 	//| error '%' cast_expression
 	;
 
 additive_expression
 	: multiplicative_expression
 	| additive_expression '+' multiplicative_expression
 	| additive_expression '-' multiplicative_expression
-	| error multiplicative_expression {yyerrok;}
-  	//| error '-' multiplicative_expression
+	| error multiplicative_expression
 	;
 
 shift_expression
@@ -162,18 +158,18 @@ relational_expression
 	| relational_expression '>' shift_expression
 	| relational_expression LE_OP shift_expression
 	| relational_expression GE_OP shift_expression
-	//| error '<' shift_expression
-  	//| error '>' shift_expression 
-	//| error LE_OP shift_expression 
-  	//| error GE_OP shift_expression 
+	| error '<' shift_expression
+  	| error '>' shift_expression 
+	| error LE_OP shift_expression 
+  	| error GE_OP shift_expression 
 	;
 
 equality_expression
 	: relational_expression
 	| equality_expression EQ_OP relational_expression
 	| equality_expression NE_OP relational_expression
-	//| error EQ_OP relational_expression
-  	//| error NE_OP relational_expression
+	| error EQ_OP relational_expression
+  	| error NE_OP relational_expression
 	;
 
 and_expression
@@ -204,9 +200,9 @@ logical_or_expression
 conditional_expression
 	: logical_or_expression
 	| logical_or_expression '?' expression ':' conditional_expression
-	//| error '?' error ':' conditional_expression
-  	//| logical_or_expression '?' error ':' conditional_expression
-  	//| error '?' expression ':' conditional_expression
+	| error '?' error ':' conditional_expression
+  	| logical_or_expression '?' error ':' conditional_expression
+  	| error '?' expression ':' conditional_expression
 	;
 
 assignment_expression
@@ -241,7 +237,7 @@ declaration
 	: declaration_specifiers ';'
 	| declaration_specifiers init_declarator_list ';'
 	| _STATIC_ASSERT_declaration
-	//| declaration_specifiers error ';'
+	| declaration_specifiers error ';'
 	;
 
 declaration_specifiers
@@ -260,13 +256,13 @@ declaration_specifiers
 init_declarator_list
 	: init_declarator
 	| init_declarator_list ',' init_declarator
-	//| error ',' init_declarator
+	| error ',' init_declarator
 	;
 
 init_declarator
 	: declarator '=' initializer
 	| declarator
-	//| error '=' initializer
+	| error '=' initializer
 	;
 
 storage_class_specifier
@@ -300,8 +296,8 @@ struct_or_union_specifier
 	: struct_or_union '{' struct_declaration_list '}'
 	| struct_or_union IDENTIFIER '{' struct_declaration_list '}'
 	| struct_or_union IDENTIFIER
-	//| struct_or_union IDENTIFIER '{' error '}'
-  	//| struct_or_union '{' error '}'
+	| struct_or_union IDENTIFIER '{' error '}'
+  	| struct_or_union '{' error '}'
 	;
 
 struct_or_union
@@ -318,7 +314,7 @@ struct_declaration
 	: specifier_qualifier_list ';'
 	| specifier_qualifier_list struct_declarator_list ';'
 	| _STATIC_ASSERT_declaration
-	//| error ';'
+	| error ';'
 	;
 
 specifier_qualifier_list
@@ -331,14 +327,14 @@ specifier_qualifier_list
 struct_declarator_list
 	: struct_declarator
 	| struct_declarator_list ',' struct_declarator
-	//| error ',' struct_declarator
+	| error ',' struct_declarator
 	;
 
 struct_declarator
 	: ':' constant_expression
 	| declarator ':' constant_expression
 	| declarator
-	//| error ':' constant_expression
+	| error ':' constant_expression
 	;
 
 enum_specifier
@@ -347,20 +343,20 @@ enum_specifier
 	| ENUM IDENTIFIER '{' enumerator_list '}'
 	| ENUM IDENTIFIER '{' enumerator_list ',' '}'
 	| ENUM IDENTIFIER
-	//| ENUM '{' error '}'
-  	//| ENUM IDENTIFIER '{' error '}'
+	| ENUM '{' error '}'
+  	| ENUM IDENTIFIER '{' error '}'
 	;
 
 enumerator_list
 	: enumerator
 	| enumerator_list ',' enumerator
-	//| error ',' enumerator
+	| error ',' enumerator
 	;
 
 enumerator
 	: enumeration_constant '=' constant_expression
 	| enumeration_constant
-	//| error '=' constant_expression
+	| error '=' constant_expression
 	;
 	
 type_qualifier
@@ -400,10 +396,9 @@ direct_declarator
 	| direct_declarator '(' parameter_type_list ')'
 	| direct_declarator '(' ')'
 	| direct_declarator '(' identifier_list ')'
-	//| direct_declarator '(' error ')' 
-  	//| error '(' error ')' 
+	| direct_declarator '(' error ')' 
+  	//| error '(' error ')' // conflictos
   	| '(' error ')' 
-	//| error error ')' {yyerrok;}
 	;
 
 pointer
@@ -411,7 +406,7 @@ pointer
 	| '*' type_qualifier_list
 	| '*' pointer
 	| '*'
-	// | '*' error pointer
+	| '*' error pointer
 	;
 
 type_qualifier_list
@@ -422,21 +417,21 @@ type_qualifier_list
 parameter_type_list
 	: parameter_list ',' ELLIPSIS
 	| parameter_list
-	//| error ',' ELLIPSIS
+	| error ',' ELLIPSIS
 	;
 
 parameter_list
 	: parameter_declaration
 	| parameter_list ',' parameter_declaration
-	//| error ',' parameter_declaration
+	| error ',' parameter_declaration
 	;
 
 parameter_declaration
 	: declaration_specifiers declarator
 	| declaration_specifiers abstract_declarator
 	| declaration_specifiers
-	//| error declarator
-	//| error abstract_declarator
+	| error declarator
+	| error abstract_declarator
 	;
 
 identifier_list
@@ -477,15 +472,15 @@ direct_abstract_declarator
 	| '(' parameter_type_list ')'
 	| direct_abstract_declarator '(' ')'
 	| direct_abstract_declarator '(' parameter_type_list ')'
-	//| '[' error ']'
-	//| direct_abstract_declarator '(' error ')'
-  	//| direct_abstract_declarator '[' error ']' 
+	| '[' error ']' // revisar
+	| direct_abstract_declarator '(' error ')' // revisar
+  	| direct_abstract_declarator '[' error ']' // revisar
 	;
 
 initializer
 	: '{' initializer_list '}'
 	| '{' initializer_list ',' '}'
-	//| '{' error '}'
+	| '{' error '}'
 	| assignment_expression
 	;
 
@@ -494,7 +489,7 @@ initializer_list
 	| initializer
 	| initializer_list ',' designation initializer
 	| initializer_list ',' initializer
-	//| error ',' initializer
+	| error ',' initializer
 	;
 
 designation
@@ -549,16 +544,16 @@ block_item
 expression_statement
 	: ';'
 	| expression ';'
-	//| error ';' 
+	| error ';' 
 	;
 
 selection_statement
 	: IF '(' expression ')' statement ELSE statement
 	| IF '(' expression ')' statement %prec "then"
 	| SWITCH '(' expression ')' statement
-	//| IF '(' error ')' statement %prec "then"
-  	//| SWITCH '(' error ')' statement
-	//| IF '(' error ')' statement ELSE statement
+	| IF '(' error ')' statement %prec "then"
+  	| SWITCH '(' error ')' statement
+	| IF '(' error ')' statement ELSE statement
 	;
 
 iteration_statement
@@ -568,8 +563,8 @@ iteration_statement
 	| FOR '(' expression_statement expression_statement expression ')' statement
 	| FOR '(' declaration expression_statement ')' statement
 	| FOR '(' declaration expression_statement expression ')' statement
-	//| DO error WHILE '(' expression ')' ';' 
-  	//| FOR '(' error ')' statement 
+	| DO error WHILE '(' expression ')' ';' 
+  	| FOR '(' error ')' statement 
 	;
 
 jump_statement
@@ -578,7 +573,7 @@ jump_statement
 	| BREAK ';'
 	| RETURN ';'
 	| RETURN expression ';'
-	//| RETURN error ';'
+	| RETURN error ';'
 	;
 
 translation_unit
@@ -592,14 +587,13 @@ external_declaration
 	;
 
 function_definition
-	: declaration_specifiers declarator declaration_list compound_statement
-	| declaration_specifiers declarator compound_statement
-	//| declaration_specifiers error compound_statement
-	| error declaration_list compound_statement
-  	//| declarator error compound_statement
-  	//| error compound_statement
-	//| error declarator declaration_list compound_statement // {printf("errorFunction_definition2\n");}
-	;
+    : declaration_specifiers declarator declaration_list compound_statement
+    | declaration_specifiers declarator compound_statement
+    | declaration_specifiers error compound_statement
+    | error declaration_list compound_statement
+	| error error compound_statement
+	| error compound_statement
+    ;
 
 declaration_list
 	: declaration
@@ -637,7 +631,7 @@ void resetColor() {
 
 int yyerror(const char *str) {
 	yellow();
-    printf("prueba.c:%d:%d: ", yylineno, column);
+    printf("%s:%d:%d: ", original_filename, yylineno, column);
 	red();
 	printf("error: ");
 	resetColor();
@@ -675,7 +669,7 @@ void eat_to_whitespace() {
 }
 
 static void location_print (FILE *out, YYLTYPE const * const loc) {
-  fprintf (out, "\033[1;33mprueba.c:%d:%d\033[0m", loc->first_line, loc->first_column);
+  fprintf (out, "\033[1;33m%s:%d:%d\033[0m", original_filename, loc->first_line, loc->first_column);
 
 //   int end_col = 0 != loc->last_column ? loc->last_column - 1 : 0;
 //   if (loc->first_line < loc->last_line) 
