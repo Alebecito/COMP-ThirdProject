@@ -5,6 +5,26 @@
         "stdlib.h": "c",
         "string.h": "c",
         "typeinfo": "c",
-        "stdio.h": "c"
-    }
+        "stdio.h": "c",
+        "dlist.h": "c",
+        "dllist.h": "c",
+        "hashtable.h": "c",
+        "hashfunc.h": "c",
+        "array": "c",
+        "*.tcc": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "memory": "c",
+        "optional": "c",
+        "string_view": "c",
+        "fstream": "c",
+        "istream": "c",
+        "ostream": "c",
+        "vector": "c",
+        "sstream": "c",
+        "streambuf": "c",
+        "functional": "c",
+        "tuple": "c"
+    },
+    "C_Cpp.dimInactiveRegions": true
 }

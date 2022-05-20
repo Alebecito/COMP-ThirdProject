@@ -1,11 +1,11 @@
-#include <string.h>
-#include <maxmod.h>
-#include "tonc.h"
-#include "dino.h"
-#include "soundbank.h"
-#include "soundbank_bin.h"
-#include "dinoSheet.h"
-#include "dinoSheetHelper.h"
+// #include <string.h>
+// #include <maxmod.h>
+// #include "tonc.h"
+// #include "dino.h"
+// #include "soundbank.h"
+// #include "soundbank_bin.h"
+// #include "dinoSheet.h"
+// #include "dinoSheetHelper.h"
 
 //Ethan Fritz 2021
 
