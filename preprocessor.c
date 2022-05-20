@@ -22,6 +22,7 @@ extern char* pp_line;
 char* first_tempfile_name;
 
 
+
 int get_error_line_file(const char *str, char* file_name) {
     // printf("STR: %s\n", str);
     // printf("FILE_NAME: %s\n", file_name);
@@ -105,10 +106,28 @@ int get_error_line(const char *str) {
 
 FILE* open_file(char* directory_path, char* file_name) {
     char* file_path = "";
+    if (strlen(directory_path) > 0 && directory_path[strlen(directory_path) - 1] != '/') {
+        // puts("QUERIDO PATH YOU ARE INCORRECT");
+        directory_path = string_append(directory_path, "/");
+    } 
     file_path = string_append(file_path, directory_path);
     file_path = string_append(file_path, file_name);
+    // printf("SPath ----------> %s\n", file_path);
     FILE* fptr = fopen(file_path, "r");
     return fptr;
+}
+
+FILE* get_file_from_env(char* file_name) {
+    char sPath[MAXPATH] = "";
+    char *pTmp;
+    // printf("%s\n", getenv( "C_INCLUDE_PATH" ));
+    if (( pTmp = getenv( "C_INCLUDE_PATH" )) != NULL ) {
+        strncpy( sPath, pTmp, MAXPATH - 1 );
+        return open_file(sPath, file_name);
+    }
+    else {
+        return NULL;
+    }
 }
 
 FILE* get_angleinclude_file(char* file_name) {
@@ -125,6 +144,10 @@ FILE* get_angleinclude_file(char* file_name) {
             return fptr;
         }
     } 
+    FILE* file_from_env = get_file_from_env(file_name);
+    if (file_from_env != NULL) {
+        return file_from_env;
+    }
     for (int i = 0; i < 4; i++) {
         file_path = string_append(file_path, include_paths[i]);
         file_path = string_append(file_path, file_name);
@@ -166,6 +189,10 @@ FILE* get_quoteinclude_file(char* file_name) {
             return fptr;
         }
     } 
+    FILE* file_from_env = get_file_from_env(file_name);
+    if (file_from_env != NULL) {
+        return file_from_env;
+    }
     for (int i = 0; i < 4; i++) {
         FILE* fptr = open_file(include_paths[i], file_name);
         if (fptr == NULL) {
