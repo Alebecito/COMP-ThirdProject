@@ -34,7 +34,7 @@ extern char *lineptr;
 extern int yydebug;
 
 int main(int argc, char *argv[]) {
-    printf("ERROR");
+    // printf("ERROR");
     int flags, opt;
     int nsecs, tfnd;
 
@@ -80,8 +80,14 @@ int main(int argc, char *argv[]) {
     }
     strcpy(fileName, argv[optind]);
     original_filename = malloc(strlen(fileName) + 1);
-    printf("ERROR");
+    // printf("ERROR");
     strcpy(original_filename, fileName);
+
+    FILE* check_file = fopen(original_filename, "r");
+    if (check_file == NULL) {
+        fprintf(stderr, "File %s not found\n", original_filename);
+        exit(EXIT_FAILURE);
+    }
     // printf("name argument = %s\n", fileName);
 
     // /* Other code omitted */
