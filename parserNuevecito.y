@@ -476,6 +476,7 @@ direct_abstract_declarator
 	| '[' error ']' // revisar
 	| direct_abstract_declarator '(' error ')' // revisar
   	| direct_abstract_declarator '[' error ']' // revisar
+	| error ')' 
 	;
 
 initializer

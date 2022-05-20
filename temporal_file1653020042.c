@@ -1,60 +1,25 @@
-#define VERSION "Version: 0.2.0"
 
-#define S_MENU 0
-#define S_NEWGAME 1
-#define S_GAME 2
-#define S_OVER 3
-#define S_SCORES 4
 
-#define LEVEL_WIDTH 80
-#define LEVEL_HEIGHT 23
-#define HS_STRINGLEN 33
 
-// colors
-#define P_COLOR 3
-#define N_COLOR 1
-#define H_COLOR 2
 
-#define GB_COLOR 4
-#define DB_COLOR 5
-#define TT_COLOR 6
-#define GT_COLOR 7
-#define PMN_COLOR 8
-#define PMP_COLOR 9
 
-#define HISCORE_FILE "/var/lib/games/greedy.scores"
 
-#define CLASSIC 0
-#define BONUSES_AND_TRAPS 1
 
-#define GBONUS 10
-#define DBONUS 11
-#define TTRAP 12
-#define GTRAP 13
+
 
 char playmodeStr[2][20] = {"Classic","Bonuses and Traps"};
 
 struct playmode {
 	int pm_id;
-	/* Number of Greedy bonuses, which doubles scores for a few moves
-	 * Greedy bonus character: $
-	 */
+	
 	int gbonusc;
 	int gbonus_moves;
-	/* Number of Diamond bonuses, which gives more scores
-	 * Diamond character: *
-	 */
+	
 	int dbonusc;
 	int dbonus_score;
-	/* Number of Teleport traps, which teleport player
-	 * to random _not_ empty location
-	 * Character: T
-	 */
+	
 	int ttrapc;
-	/* Number of Gas traps, which confuses player
-	 * Direction of next moves is random.
-	 * Character: G
-	 */
+	
 	int gtrapc;
 	int gtrap_moves;
 };
@@ -66,16 +31,16 @@ void setPlaymodeArgs(int npmid, int ngbonusc, int ngbonus_moves, int ndbonusc, i
 ndbonus_score, int nttrapc, int ngtrapc, int ngtrap_moves);
 
 void setPlaymode(int newmode) {
-	if (newmode == CLASSIC) {
-		setPlaymodeArgs(CLASSIC,0,0,0,0,0,0,0);
+	if (newmode == 0) {
+		setPlaymodeArgs(0,0,0,0,0,0,0,0);
 	}
-	else if (newmode == BONUSES_AND_TRAPS) {
-		// setPlaymodeArgs(BONUSES_AND_TRAPS,7,5,10,18,5,3,4);
-		/* TODO: Add teleport traps, when they work */
-		setPlaymodeArgs(BONUSES_AND_TRAPS,14,5,20,18,0,16,4);
+	else if (newmode == 1) {
+		
+		
+		setPlaymodeArgs(1,14,5,20,18,0,16,4);
 	}
 	else
-		setPlaymodeArgs(CLASSIC,0,0,0,0,0,0,0);
+		setPlaymodeArgs(0,0,0,0,0,0,0,0);
 }
 
 void setPlaymodeArgs(int npmid, int ngbonusc, int ngbonus_moves, int ndbonusc, int
@@ -90,8 +55,7 @@ ndbonus_score, int nttrapc, int ngtrapc, int ngtrap_moves) {
 	currentPm.gtrap_moves = ngtrap_moves;
 }
 
-/* Max randomizations in shuffling, check function makeLevel() */
-#define RANDOM_MAX 10
+
 
 struct level_pos {
         int color;
@@ -123,13 +87,13 @@ void saveScores();
 void addScoreEntry(char *nname, int nscore);
 
 
-struct level_pos level[LEVEL_WIDTH][LEVEL_HEIGHT];
+struct level_pos level[80][23];
 
 struct score_entry hiscores[10];
 
 struct player_info player;
 
-int state = ; // error: falta un 0
+int state = 0;
 int changed = 1;
 
 char score_str[12];
@@ -139,12 +103,7 @@ char score_str[12];
 int main(int argc, char *argv[]) {
         int transparent_bg = 0;
         int optchr;
-        /* getopt code from cmatrix
-         * http://www.asty.org/cmatrix
-         *
-         * There aren't too many clargs yet, but this code will be easier
-         * to develop later, when there are more options...
-         */
+        
         while ( (optchr = getopt(argc, argv, "t")) != EOF) {
                 switch (optchr) {
                         case 't':
@@ -167,22 +126,22 @@ int main(int argc, char *argv[]) {
                         }
                 }
                 start_color();
-                init_pair(N_COLOR, COLOR_GREEN, bg);
-                init_pair(H_COLOR, COLOR_CYAN, bg);
-                init_pair(P_COLOR, COLOR_WHITE, bg);
-                init_pair(GB_COLOR, COLOR_YELLOW, bg);
-                init_pair(DB_COLOR, COLOR_MAGENTA, bg);
-                init_pair(TT_COLOR, COLOR_BLUE, bg);
-                init_pair(GT_COLOR, COLOR_GREEN, bg);
-                /* normal color for alternative playmodes */
-                init_pair(PMN_COLOR, COLOR_WHITE, bg);
-                init_pair(PMP_COLOR, COLOR_RED, bg);
+                init_pair(1, COLOR_GREEN, bg);
+                init_pair(2, COLOR_CYAN, bg);
+                init_pair(3, COLOR_WHITE, bg);
+                init_pair(4, COLOR_YELLOW, bg);
+                init_pair(5, COLOR_MAGENTA, bg);
+                init_pair(6, COLOR_BLUE, bg);
+                init_pair(7, COLOR_GREEN, bg);
+                
+                init_pair(8, COLOR_WHITE, bg);
+                init_pair(9, COLOR_RED, bg);
         }
         else {
                 printf("This game is very unplayable without colors.");
                 quit(EXIT_FAILURE);
         }
-        nl); // error: falta paren izquierdo
+        nl();
         noecho();
         curs_set(0);
 
@@ -194,49 +153,49 @@ int main(int argc, char *argv[]) {
 
 void game() {
         int i, j, k;
-        // temp-string for hiscore-screenformatting
+        
         char tmpstr[256];
 
         while(1) {
-                if (state == S_NEWGAME) {
+                if (state == 1) {
                         makeLevel();
                         player.gbonus_moves = 0;
                         player.gtrap_moves = 0;
                         player.score = 0;
-                        player.x = getRandomInt(0, LEVEL_WIDTH-1);
-                        player.y = getRandomInt(0, LEVEL_HEIGHT-1);
+                        player.x = getRandomInt(0, 80-1);
+                        player.y = getRandomInt(0, 23-1);
                         state++;
                         changed = 1;
 
                         clear();
-                        for (i=0; i<LEVEL_WIDTH; i++) {
-                                mvaddch(LEVEL_HEIGHT,i,'-');
+                        for (i=0; i<80; i++) {
+                                mvaddch(23,i,'-');
                         }
                 }
 
-                if (state == S_GAME) {
+                if (state == 2) {
                         if (changed == 1) {
                                 litRoute();
-                                for (j=0; j<LEVEL_HEIGHT; j++) {
-                                        for (i=0; i<LEVEL_WIDTH; i++) {
+                                for (j=0; j<23; j++) {
+                                        for (i=0; i<80; i++) {
                                                 attron(COLOR_PAIR(level[i][j].color));
                                                 switch(k = level[i][j].number) {
-                                                /* GBONUS, DBONUS, etc from playmodes.h */
-                                                        case GBONUS:
+                                                
+                                                        case 10:
                                                                 mvaddch(j,i, '$');
-                                                                level[i][j].color = GB_COLOR;
+                                                                level[i][j].color = 4;
                                                                 break;
-                                                        case DBONUS:
+                                                        case 11:
                                                                 mvaddch(j,i, '*');
-                                                                level[i][j].color = DB_COLOR;
+                                                                level[i][j].color = 5;
                                                                 break;
-                                                        case TTRAP:
+                                                        case 12:
                                                                 mvaddch(j,i, 'T');
-                                                                level[i][j].color = TT_COLOR;
+                                                                level[i][j].color = 6;
                                                                 break;
-                                                        case GTRAP:
+                                                        case 13:
                                                                 mvaddch(j,i, 'G');
-                                                                level[i][j].color = GT_COLOR;
+                                                                level[i][j].color = 7;
                                                                 break;
                                                         default:
                                                                 if ((k >= 1) && (k <= 9)) {
@@ -246,33 +205,33 @@ void game() {
                                                                         mvaddch(j,i,' ');
 
                                                                 if (currentPm.pm_id != 0) {
-                                                                        level[i][j].color = PMN_COLOR;
+                                                                        level[i][j].color = 8;
                                                                 }
                                                                 else
-                                                                        level[i][j].color = N_COLOR;
+                                                                        level[i][j].color = 1;
                                                                 break;
                                                 }
                                         }
                                 }
                         if (currentPm.pm_id != 0)
-                                attron(COLOR_PAIR(PMP_COLOR));
+                                attron(COLOR_PAIR(9));
                         else
-                                attron(COLOR_PAIR(P_COLOR));
+                                attron(COLOR_PAIR(3));
                         mvaddch(player.y, player.x, '@');
                         sprintf(score_str, "%s %d", "Score:", player.score);
-                        mvaddstr(LEVEL_HEIGHT+1,LEVEL_WIDTH-12,score_str);
+                        mvaddstr(23+1,80-12,score_str);
 
                         if ((player.gbonus_moves > 0) && (player.gtrap_moves > 0)) {
-                                mvaddstr(LEVEL_HEIGHT+1,0,"You are confused and greed.");
+                                mvaddstr(23+1,0,"You are confused and greed.");
                         }
                         else if (player.gbonus_moves > 0) {
-                                mvaddstr(LEVEL_HEIGHT+1,0,"You are greed.");
+                                mvaddstr(23+1,0,"You are greed.");
                         }
                         else if (player.gtrap_moves > 0) {
-                                mvaddstr(LEVEL_HEIGHT+1,0,"You are confused.");
+                                mvaddstr(23+1,0,"You are confused.");
                         }
                         else
-                                mvaddstr(LEVEL_HEIGHT+1,0,"                           ");
+                                mvaddstr(23+1,0,"                           ");
 
                         refresh();
                         changed = 0;
@@ -308,21 +267,21 @@ void game() {
                                 state++;
                         }
                 }
-                else if (state == S_OVER) {
+                else if (state == 3) {
                         clear();
-                        attron(COLOR_PAIR(N_COLOR));
-                        mvaddstr((LEVEL_HEIGHT-4) / 2,(LEVEL_WIDTH-41) / 2,
+                        attron(COLOR_PAIR(1));
+                        mvaddstr((23-4) / 2,(80-41) / 2,
                                         "  ___                   ___");
-                        mvaddstr((LEVEL_HEIGHT-4) / 2 + 1,(LEVEL_WIDTH-41) / 2,
+                        mvaddstr((23-4) / 2 + 1,(80-41) / 2,
                                         " / __|__ _ _ __  ___   / _ \\__ _____ _ _");
-                        mvaddstr((LEVEL_HEIGHT-4) / 2 + 2,(LEVEL_WIDTH-41) / 2,
+                        mvaddstr((23-4) / 2 + 2,(80-41) / 2,
                                         "| (_ / _` | '  \\/ -_) | (_) \\ V / -_) '_|");
-                        mvaddstr((LEVEL_HEIGHT-4) / 2 + 3,(LEVEL_WIDTH-41) / 2,
+                        mvaddstr((23-4) / 2 + 3,(80-41) / 2,
                                         " \\___\\__,_|_|_|_\\___|  \\___/ \\_/\\___|_|");
                         sprintf(score_str, "%s %d", "Score: ", player.score);
-                        mvaddstr((LEVEL_HEIGHT -4) / 2 + 5, (LEVEL_WIDTH - 12) / 2,
+                        mvaddstr((23 -4) / 2 + 5, (80 - 12) / 2,
                                         score_str);
-                        mvaddstr(LEVEL_HEIGHT - 5,(LEVEL_WIDTH - 13) / 2,
+                        mvaddstr(23 - 5,(80 - 13) / 2,
                                         "Press any key");
 
                         if (getch() != 0) {
@@ -334,85 +293,85 @@ void game() {
                                         getstr(tmpstr);
                                         noecho();
                                         addScoreEntry(tmpstr, player.score);
-                                        // We don't need scores anymore...
+                                        
                                         player.score = 0;
-                                        state = S_SCORES;
+                                        state = 4;
                                         changed = 1;
                                 }
                                 else
-                                        state = S_MENU;
+                                        state = 0;
                         }
                 }
-                else if (state == S_SCORES) {
+                else if (state == 4) {
                         if ( hiscores[0].s == 0 )
                                 loadScores();
                         if (changed == 1) {
                           clear();
-                          attron(COLOR_PAIR(N_COLOR));
-                          mvaddstr(1, (LEVEL_WIDTH-30) / 2, " _  _ _");
-                          mvaddstr(2, (LEVEL_WIDTH-30) / 2, "| || (_)___ __ ___ _ _ ___ ___");
-                          mvaddstr(3, (LEVEL_WIDTH-30) / 2, "| __ | (_-</ _/ _ \\ '_/ -_|_-<");
-                          mvaddstr(4, (LEVEL_WIDTH-30) / 2, "|_||_|_/__/\\__\\___/_| \\___/__/");
+                          attron(COLOR_PAIR(1));
+                          mvaddstr(1, (80-30) / 2, " _  _ _");
+                          mvaddstr(2, (80-30) / 2, "| || (_)___ __ ___ _ _ ___ ___");
+                          mvaddstr(3, (80-30) / 2, "| __ | (_-</ _/ _ \\ '_/ -_|_-<");
+                          mvaddstr(4, (80-30) / 2, "|_||_|_/__/\\__\\___/_| \\___/__/");
 
-                          // Highlight the first three
-                          attron(COLOR_PAIR(H_COLOR));
+                          
+                          attron(COLOR_PAIR(2));
                           for (i=0;i<3;i++) {
                                   sprintf(tmpstr, " %d.", i+1);
-                                  mvaddstr(6+i, (LEVEL_WIDTH - HS_STRINGLEN) / 2, tmpstr);
-                                  mvaddstr(6+i, (LEVEL_WIDTH - HS_STRINGLEN) / 2 + 5, hiscores[i].n);
+                                  mvaddstr(6+i, (80 - 33) / 2, tmpstr);
+                                  mvaddstr(6+i, (80 - 33) / 2 + 5, hiscores[i].n);
                                   sprintf(tmpstr, "%d", hiscores[i].s);
-                                  mvaddstr(6+i, (LEVEL_WIDTH - HS_STRINGLEN) / 2 + 27, tmpstr);
+                                  mvaddstr(6+i, (80 - 33) / 2 + 27, tmpstr);
                           }
-                          attron(COLOR_PAIR(N_COLOR));
+                          attron(COLOR_PAIR(1));
                           for (i=3;i<9;i++) {
                                   sprintf(tmpstr, " %d.", i+1);
-                                  mvaddstr(6+i, (LEVEL_WIDTH - HS_STRINGLEN) / 2, tmpstr);
-                                  mvaddstr(6+i, (LEVEL_WIDTH - HS_STRINGLEN) / 2 + 5, hiscores[i].n);
+                                  mvaddstr(6+i, (80 - 33) / 2, tmpstr);
+                                  mvaddstr(6+i, (80 - 33) / 2 + 5, hiscores[i].n);
                                   sprintf(tmpstr, "%d", hiscores[i].s);
-                                  mvaddstr(6+i, (LEVEL_WIDTH - HS_STRINGLEN) / 2 + 27, tmpstr);
+                                  mvaddstr(6+i, (80 - 33) / 2 + 27, tmpstr);
                           }
                           sprintf(tmpstr, "%d.", 10);
-                          mvaddstr(15, (LEVEL_WIDTH - HS_STRINGLEN) / 2, tmpstr);
-                          mvaddstr(15, (LEVEL_WIDTH - HS_STRINGLEN) / 2 + 5, hiscores[9].n);
+                          mvaddstr(15, (80 - 33) / 2, tmpstr);
+                          mvaddstr(15, (80 - 33) / 2 + 5, hiscores[9].n);
                           sprintf(tmpstr, "%d", hiscores[9].s);
-                          mvaddstr(15, (LEVEL_WIDTH - HS_STRINGLEN) / 2 + 27, tmpstr);
+                          mvaddstr(15, (80 - 33) / 2 + 27, tmpstr);
 
-                          mvaddstr(LEVEL_HEIGHT - 4,(LEVEL_WIDTH - 13) / 2,
+                          mvaddstr(23 - 4,(80 - 13) / 2,
                                         "Press any key");
                           changed = 0;
                         }
                         if (getch() != 0) {
-                                state = S_MENU;
+                                state = 0;
                                 changed = 1;
                         }
                 }
-                else if (state == S_MENU) {
+                else if (state == 0) {
                         if (changed == 1) {
                                 clear();
-                                attron(COLOR_PAIR(N_COLOR));
-                                // Writes large Greedy text
-                                mvaddstr(2,(LEVEL_WIDTH-33) / 2,
+                                attron(COLOR_PAIR(1));
+                                
+                                mvaddstr(2,(80-33) / 2,
                                                 "  ____                   _");
-                                mvaddstr(3,(LEVEL_WIDTH-33) / 2,
+                                mvaddstr(3,(80-33) / 2,
                                                 " / ___|_ __ ___  ___  __| |_   _");
-                                mvaddstr(4,(LEVEL_WIDTH-33) / 2,
+                                mvaddstr(4,(80-33) / 2,
                                                 "| |  _| '__/ _ \\/ _ \\/ _` | | | |");
-                                mvaddstr(5,(LEVEL_WIDTH-33) / 2,
+                                mvaddstr(5,(80-33) / 2,
                                                 "| |_| | | |  __/  __/ (_| | |_| |");
-                                mvaddstr(6,(LEVEL_WIDTH-33) / 2,
+                                mvaddstr(6,(80-33) / 2,
                                                 " \\____|_|  \\___|\\___|\\__,_|\\__, |");
-                                mvaddstr(7,(LEVEL_WIDTH-33) / 2,
+                                mvaddstr(7,(80-33) / 2,
                                                 "                           |___/");
-                                mvaddstr(8,(LEVEL_WIDTH-33) / 2, VERSION);
-                                mvaddstr(10,(LEVEL_WIDTH-18) / 2,
+                                mvaddstr(8,(80-33) / 2, "Version: 0.2.0");
+                                mvaddstr(10,(80-18) / 2,
                                                 "s - Start new game");
-                                mvaddstr(11,(LEVEL_WIDTH-17) / 2,
+                                mvaddstr(11,(80-17) / 2,
                                                 "h - Show Hiscores");
                                 sprintf(tmpstr, "p - Playmode: %s",
                                 playmodeStr[currentPm.pm_id]);
-                                mvaddstr(12, (LEVEL_WIDTH - 18) / 2, tmpstr);
+                                mvaddstr(12, (80 - 18) / 2, tmpstr);
 
-                                mvaddstr(14,(LEVEL_WIDTH-8) / 2, "q - Quit");
+                                mvaddstr(14,(80-8) / 2, "q - Quit");
                                 refresh();
                                 changed = 0;
                         }
@@ -422,7 +381,7 @@ void game() {
                                         state++;
                                         break;
                                 case 'h':
-                                        state = S_SCORES;
+                                        state = 4;
                                         changed = 1;
                                         break;
                                 case 'p':
@@ -441,52 +400,52 @@ void game() {
 
 void makeLevel() {
         int i, j, k, l, maxnumber = 9;
-        /* Counters for bonusmodes */
+        
         int tmp_gbc, tmp_dbc, tmp_ttc, tmp_gtc;
         struct level_pos temp;
 
-        /* Check playmodes.c, playmodes.h for playmodestuff */
-        if (currentPm.pm_id == BONUSES_AND_TRAPS) {
+        
+        if (currentPm.pm_id == 1) {
                 maxnumber = 13;
                 tmp_gbc = currentPm.gbonusc;
                 tmp_dbc = currentPm.dbonusc;
                 tmp_ttc = currentPm.ttrapc;
                 tmp_gtc = currentPm.gtrapc;
         }
-        for (j=0; j<LEVEL_HEIGHT; j++) {
-                for (i=0; i<LEVEL_WIDTH; i++) {
+        for (j=0; j<23; j++) {
+                for (i=0; i<80; i++) {
                         switch (k = getRandomInt(1,maxnumber)) {
-                                case GBONUS:
+                                case 10:
                                         if (tmp_gbc > 0) {
                                                 level[i][j].number = k;
-                                                level[i][j].color = GB_COLOR;
+                                                level[i][j].color = 4;
                                                 tmp_gbc--;
                                         }
                                         else
                                                 level[i][j].number = getRandomInt(1,9);
                                         break;
-                                case DBONUS:
+                                case 11:
                                         if (tmp_dbc > 0) {
                                                 level[i][j].number = k;
-                                                level[i][j].color = DB_COLOR;
+                                                level[i][j].color = 5;
                                                 tmp_dbc--;
                                         }
                                         else
                                                 level[i][j].number = getRandomInt(1,9);
                                         break;
-                                case TTRAP:
+                                case 12:
                                         if (tmp_ttc > 0) {
                                                 level[i][j].number = k;
-                                                level[i][j].color = TT_COLOR;
+                                                level[i][j].color = 6;
                                                 tmp_ttc--;
                                         }
                                         else
                                                 level[i][j].number = getRandomInt(1,9);
                                         break;
-                                case GTRAP:
+                                case 13:
                                         if (tmp_gtc > 0) {
                                                 level[i][j].number = k;
-                                                level[i][j].color = GT_COLOR;
+                                                level[i][j].color = 7;
                                                 tmp_gtc--;
                                         }
                                         else
@@ -495,29 +454,29 @@ void makeLevel() {
                                 default:
                                         level[i][j].number = k;
                                         if (currentPm.pm_id != 0) {
-                                                level[i][j].color = PMN_COLOR;
+                                                level[i][j].color = 8;
                                         }
                                         else
-                                                level[i][j].color = N_COLOR;
+                                                level[i][j].color = 1;
                                         break;
                         }
                 }
         }
-        /* Little level randomizing that shuffles bonuses better */
+        
         if (currentPm.pm_id != 0) {
-                for (i=0;i<LEVEL_WIDTH;i++) {
-                        for (l=0;l<RANDOM_MAX;l++) {
-                                j = getRandomInt(0, (LEVEL_HEIGHT-1) / 2);
-                                k = getRandomInt((LEVEL_HEIGHT-1) / 2, LEVEL_HEIGHT-1);
+                for (i=0;i<80;i++) {
+                        for (l=0;l<10;l++) {
+                                j = getRandomInt(0, (23-1) / 2);
+                                k = getRandomInt((23-1) / 2, 23-1);
                                 temp = level[i][j];
                                 level[i][j] = level[i][k];
                                 level[i][k] = temp;
                         }
                 }
-                for (i=0;i<LEVEL_HEIGHT;i++) {
-                        for (l=0;l<RANDOM_MAX;l++) {
-                                j = getRandomInt(0, (LEVEL_WIDTH-1) / 2);
-                                k = getRandomInt((LEVEL_WIDTH-1) / 2, LEVEL_WIDTH-1);
+                for (i=0;i<23;i++) {
+                        for (l=0;l<10;l++) {
+                                j = getRandomInt(0, (80-1) / 2);
+                                k = getRandomInt((80-1) / 2, 80-1);
                                 temp = level[j][i];
                                 level[j][i] = level[k][i];
                                 level[k][i] = temp;
@@ -535,8 +494,8 @@ void litRoute() {
         for (i = -1; i <= 1; i++) {
                 for (j = -1; j <= 1; j++) {
                         if ( (tx+i >= 0) && (ty+j >= 0) &&
-                                        (tx+i < LEVEL_WIDTH) &&
-                                        (ty+j < LEVEL_HEIGHT) ) {
+                                        (tx+i < 80) &&
+                                        (ty+j < 23) ) {
 
                                 for ( k = 1; k <= level[tx+i][ty+j].number; k++)
                                 {
@@ -546,10 +505,10 @@ void litRoute() {
                                         }
                                         else if ( (tx+(i*k) >= 0) &&
                                                 (ty+(j*k) >= 0) &&
-                                                (tx+(i*k) < LEVEL_WIDTH)
-                                                && (ty+(j*k) < LEVEL_HEIGHT) ) {
+                                                (tx+(i*k) < 80)
+                                                && (ty+(j*k) < 23) ) {
 
-                                                level[tx+(i*k)][ty+(j*k)].color = H_COLOR;
+                                                level[tx+(i*k)][ty+(j*k)].color = 2;
                                         }
                                         else
                                                 break;
@@ -579,19 +538,19 @@ void movePlayer(int x, int y) {
                         break;
                 }
                 if ( (tx+(i*xc) >= 0) && (ty+(i*yc) >= 0) &&
-                                (tx+(i*xc) < LEVEL_WIDTH) &&
-                                (ty+(i*yc) < LEVEL_HEIGHT) ) {
+                                (tx+(i*xc) < 80) &&
+                                (ty+(i*yc) < 23) ) {
 
                         switch ( j = level[tx+(i*xc)][ty+(i*yc)].number ) {
-                                case GBONUS:
+                                case 10:
                                         player.gbonus_moves += currentPm.gbonus_moves;
                                         level[tx+(i*xc)][ty+(i*yc)].number = 0;
                                         break;
-                                case DBONUS:
+                                case 11:
                                         tscore += currentPm.dbonus_score;
                                         level[tx+(i*xc)][ty+(i*yc)].number = 0;
                                         break;
-                                case TTRAP:
+                                case 12:
                                         teleport();
                                         if (player.gbonus_moves > 0) {
                                                 player.score += (2*tscore);
@@ -602,7 +561,7 @@ void movePlayer(int x, int y) {
                                         level[tx][ty].number = 0;
                                         return;
                                         break;
-                                case GTRAP:
+                                case 13:
                                         player.gtrap_moves += currentPm.gtrap_moves;
                                         level[tx+(i*xc)][ty+(i*yc)].number = 0;
                                         break;
@@ -631,11 +590,11 @@ void movePlayer(int x, int y) {
 }
 
 void teleport() {
-        in tx, ty; // error: tipo invalido
+        in tx, ty;
 
         while(1) {
-                tx = getRandomInt(0,LEVEL_WIDTH-1);
-                ty = getRandomInt(0,LEVEL_HEIGHT-1);
+                tx = getRandomInt(0,80-1);
+                ty = getRandomInt(0,23-1);
                 if (level[tx][ty].number != 0)
                         break;
         }
@@ -650,8 +609,8 @@ int isGameOver() {
         for (i=-1; i<=1; i++) {
                 for (j=-1; j<=1; j++) {
                         if ( (tx+i >= 0) && (ty+j >= 0) &&
-                                        (tx+i < LEVEL_WIDTH) &&
-                                        (ty+j < LEVEL_HEIGHT) &&
+                                        (tx+i < 80) &&
+                                        (ty+j < 23) &&
                                         level[tx+i][ty+j].number != 0 ) {
                                 return 0;
                         }
@@ -661,13 +620,13 @@ int isGameOver() {
         return 1;
 }
 
-void quit(int ret_code) // falta llave
+void quit(int ret_code) {
         endwin();
         exit(ret_code);
 }
 
 void usage() {
-        printf("Greedy %s%s", VERSION, "\n");
+        printf("Greedy %s%s", "Version: 0.2.0", "\n");
         printf("Usage: greedy -[ht]\n");
         printf("  -h: Print help and exit\n");
         printf("  -t: Transparent background color\n");
@@ -677,7 +636,7 @@ int getRandomInt(int min, int max) {
 
         unsigned int rand_int;
 
-        // Let's see if we have insane input
+        
         if (min > max) {
                 return 0;
         }
@@ -688,18 +647,13 @@ int getRandomInt(int min, int max) {
 }
 
 
-/*
- * Begin Hiscores handling code
- *
- * Looked little help from Penguin-Command sources
- * You can get Penguin-Command from  http://www.linux-games.com
- */
+
 
 int *openScoreFile(char *mode) {
         FILE *file;
 
-        if ( (file = fopen(HISCORE_FILE, mode)) == NULL) {
-                printf("\nUnable to open hiscore file \"%s\" ", HISCORE_FILE);
+        if ( (file = fopen("/var/lib/games/greedy.scores", mode)) == NULL) {
+                printf("\nUnable to open hiscore file \"%s\" ", "/var/lib/games/greedy.scores");
                 if ( strcmp(mode, "r") == 0)
                         printf("for read.\n");
                 else if ( strcmp(mode, "w") == 0)
@@ -718,7 +672,7 @@ void loadScores() {
                         quit(EXIT_FAILURE);
                 }
                 for (i=0;i<10;i++) {
-                        // TODO: Add random names from credits to this later
+                        
                         fprintf(file, "Player\n");
                         fprintf(file, "%d\n", 1000-i*100);
                 }
@@ -759,14 +713,12 @@ void addScoreEntry(char *nname, int nscore) {
 
         for (i=0;i<10;i++) {
                 if (nscore > hiscores[i].s) {
-                        /*
-                         * Move score entries lower to make room for new one
-                         */
+                        
                         for (j=8;j>=i;j--) {
                                 hiscores[j+1].s = hiscores[j].s;
                                 sprintf(hiscores[j+1].n, "%s", hiscores[j].n);
                         }
-                        // Add new score entry
+                        
                         hiscores[i].s = nscore;
                         sprintf(hiscores[i].n, "%s", nname);
                         break;
