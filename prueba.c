@@ -1,6 +1,3 @@
-voi copyt(int n, int x) {
+void main() {
     int a = 5 . 5;
-    nt b = 5 + 5;
-    int a;
-
 }

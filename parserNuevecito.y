@@ -208,6 +208,7 @@ conditional_expression
 assignment_expression
 	: conditional_expression
 	| unary_expression assignment_operator assignment_expression
+	| error ';'
 	;
 
 assignment_operator
@@ -475,6 +476,7 @@ direct_abstract_declarator
 	| '[' error ']' // revisar
 	| direct_abstract_declarator '(' error ')' // revisar
   	| direct_abstract_declarator '[' error ']' // revisar
+	| error ')' 
 	;
 
 initializer
