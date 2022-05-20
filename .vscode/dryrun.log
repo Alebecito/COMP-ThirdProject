@@ -1,5 +1,10 @@
-make --dry-run --keep-going --print-directory
+make --dry-run --always-make --keep-going --print-directory
 make: Entering directory '/mnt/c/Users/Eli02/OneDrive - Estudiantes ITCR/TEC5/COMP/Proyectos/Proyecto Programado 2/COMP-ThirdProject'
-make: 'parserC' is up to date.
+rm -f preprocessor.c 
+lex  -t preprocessor.l > preprocessor.c
+flex scanner.l
+bison -d -t parserBison.y
+flex preprocessor.l
+gcc -g parserBison.tab.c lex.yy.c preprocessor.c preprocessor.yy.c parserMain.c -lfl -o parserC
 make: Leaving directory '/mnt/c/Users/Eli02/OneDrive - Estudiantes ITCR/TEC5/COMP/Proyectos/Proyecto Programado 2/COMP-ThirdProject'
  

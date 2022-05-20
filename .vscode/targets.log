@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Fri May 20 00:47:14 2022
+# Make data base, printed on Fri May 20 00:59:55 2022
 
 # Variables
 
@@ -55,7 +55,7 @@ PATH = /home/elias/.vscode-server/bin/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5/b
 # environment
 VSCODE_LOG_STACK = false
 # environment
-VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-ad50b9e5-1033-44e4-87bb-e4c13352e588.sock
+VSCODE_IPC_HOOK_CLI = /tmp/vscode-ipc-aa1fa123-037f-4423-82ed-df6b2ee28737.sock
 # environment
 VSCODE_SERVER_TAR = /mnt/c/Users/Eli02/AppData/Local/Temp/vscode-remote-wsl/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5/vscode-server-stable-linux-x64.tar.gz
 # default
@@ -83,7 +83,7 @@ LESSCLOSE = /usr/bin/lesspipe %s %s
 # environment
 LOGNAME = elias
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
@@ -241,12 +241,12 @@ parserBison.y:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 26 / storage = 291 B / avg = 11 B
-# current buf: size = 8162 B / used = 291 B / count = 26 / avg = 11 B
+# strcache buffers: 1 (0) / strings = 27 / storage = 281 B / avg = 10 B
+# current buf: size = 8162 B / used = 281 B / count = 27 / avg = 10 B
 
-# strcache performance: lookups = 37 / hit rate = 29%
+# strcache performance: lookups = 37 / hit rate = 27%
 # hash-table stats:
-# Load=26/8192=0%, Rehash=0, Collisions=1/37=3%
-# Finished Make data base on Fri May 20 00:47:14 2022
+# Load=27/8192=0%, Rehash=0, Collisions=1/37=3%
+# Finished Make data base on Fri May 20 00:59:55 2022
 
  
