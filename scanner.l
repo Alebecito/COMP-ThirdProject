@@ -19,7 +19,7 @@ newline [\n]
 
 %{
     // #include "globals.h"
-    #include "parserNuevecito.tab.h"
+    #include "parserBison.tab.h"
     #define YY_USER_ACTION \
         yylloc.first_line = yylloc.last_line = yylineno; \
         yylloc.first_column = yylloc.last_column; \
@@ -245,7 +245,7 @@ int check_type(void) {
         strcpy(new_symbol.lexeme, yytext);
         add_symbol_to_symbolTable(new_symbol);
         typedef_name_flag = 2;
-        show_symbol_table();
+        // show_symbol_table();
         return TYPEDEF_NAME;
     } 
     else if (typedef_name_flag == 2) {

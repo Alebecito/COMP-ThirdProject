@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu May 19 18:13:35 2022
+# Make data base, printed on Fri May 20 00:47:14 2022
 
 # Variables
 
@@ -163,9 +163,9 @@ MOTD_SHOWN = update-motd
 
 # Directories
 
-# . (device 68, inode 3377699721357786): 34 files, no impossibilities.
+# . (device 68, inode 3377699721357786): 21 files, no impossibilities.
 
-# 34 files, no impossibilities in 1 directories.
+# 21 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -193,27 +193,21 @@ all:
 #  File has not been updated.
 
 # Not a target:
-main.c:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-
-# Not a target:
 makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-05-19 18:13:28.6205586
+#  Last modified 2022-05-20 00:46:43.4975084
 #  File has been updated.
 #  Successfully updated.
 
-parserC: scanner.l parserNuevecito.y main.c preprocessor.l parserMain.c preprocessor.c
+parserC: scanner.l parserBison.y preprocessor.l parserMain.c preprocessor.c
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'makefile', line 3):
 	flex scanner.l
-	bison -d -t -v parserNuevecito.y
+	bison -d -t parserBison.y
 	flex preprocessor.l
-	gcc -g parserNuevecito.tab.c lex.yy.c preprocessor.c preprocessor.yy.c parserMain.c -lfl -o parserC
+	gcc -g parserBison.tab.c lex.yy.c preprocessor.c preprocessor.yy.c parserMain.c -lfl -o parserC
 
 # Not a target:
 parserMain.c:
@@ -228,31 +222,31 @@ parserMain.c:
 #  File has not been updated.
 
 # Not a target:
-parserNuevecito.y:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-
-# Not a target:
 preprocessor.l:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
 
+# Not a target:
+parserBison.y:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
 # files hash-table stats:
-# Load=11/1024=1%, Rehash=0, Collisions=0/27=0%
+# Load=10/1024=1%, Rehash=0, Collisions=0/25=0%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 39 / storage = 480 B / avg = 12 B
-# current buf: size = 8162 B / used = 480 B / count = 39 / avg = 12 B
+# strcache buffers: 1 (0) / strings = 26 / storage = 291 B / avg = 11 B
+# current buf: size = 8162 B / used = 291 B / count = 26 / avg = 11 B
 
-# strcache performance: lookups = 51 / hit rate = 23%
+# strcache performance: lookups = 37 / hit rate = 29%
 # hash-table stats:
-# Load=39/8192=0%, Rehash=0, Collisions=1/51=2%
-# Finished Make data base on Thu May 19 18:13:35 2022
+# Load=26/8192=0%, Rehash=0, Collisions=1/37=3%
+# Finished Make data base on Fri May 20 00:47:14 2022
 
  

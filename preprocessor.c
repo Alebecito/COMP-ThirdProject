@@ -54,7 +54,7 @@ int get_error_line_file(const char *str, char* file_name) {
     char* column_str = malloc(sizeof(char) * 30);
     sprintf(column_str, "%d", pp_column);
     int offset = 5 + strlen(column_str);
-    printf("%d", offset);
+    // printf("%d", offset);
 	for(int i = 0; i < pp_column + offset - 2; i++)
 		printf(" ");
 	// red();
@@ -107,7 +107,6 @@ int get_error_line(const char *str) {
 FILE* open_file(char* directory_path, char* file_name) {
     char* file_path = "";
     if (strlen(directory_path) > 0 && directory_path[strlen(directory_path) - 1] != '/') {
-        // puts("QUERIDO PATH YOU ARE INCORRECT");
         directory_path = string_append(directory_path, "/");
     } 
     file_path = string_append(file_path, directory_path);
@@ -120,7 +119,6 @@ FILE* open_file(char* directory_path, char* file_name) {
 FILE* get_file_from_env(char* file_name) {
     char sPath[MAXPATH] = "";
     char *pTmp;
-    // printf("%s\n", getenv( "C_INCLUDE_PATH" ));
     if (( pTmp = getenv( "C_INCLUDE_PATH" )) != NULL ) {
         strncpy( sPath, pTmp, MAXPATH - 1 );
         return open_file(sPath, file_name);

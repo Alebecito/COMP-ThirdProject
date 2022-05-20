@@ -1,22 +1,5 @@
-// #include <stdlib.h>
-// #include <stdio.h>
-// #include <string.h>
+
 extern void preprocessor(char* input_filename);
-
-// int main(int argc, char **argv) {
-//     // char sPath[MAXPATH] = "";
-//     // char *pTmp;
-//     // if (( pTmp = getenv( "DISPLAY" )) != NULL ) {
-//     //     strncpy( sPath, pTmp, MAXPATH - 1 );           // Save a copy for our use.
-//     //     puts(sPath);
-//     //     puts("LOL");
-//     // }
-//     // else {
-//     //     fprintf( stderr, "No PATH variable set.\n") ;
-//     // }
-
-
-// }
 
 #include <unistd.h>
 #include <stdlib.h>
