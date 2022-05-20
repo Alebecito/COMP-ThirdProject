@@ -178,7 +178,7 @@ newline [\n]
 
 {whitespace}+           { }
 {newline} 				{ next_column = 1; }
-.					    { }
+.					    { printf("Lexical Error: Token %s not suppported", yytext); }
 
 %%
 
